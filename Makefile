@@ -1,11 +1,15 @@
 all: rshell
 
-FLAGS = -Wall -Werror -ansi -pedantic
-#$(FLAGS)
+FLG=-Wall -Werror -ansi -pedantic
+CMP=g++
 
 
-rshell:
+rshell: src/main.cpp
+	$(CMP) $(FLG) src/main.cpp -o rshell.out
 
+
+clean:
+	rm *.o rshell.out
 #example:
 #a.out : BST.h main.cc
 #	g++ $(FLAGS) main.cc
