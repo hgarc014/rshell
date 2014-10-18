@@ -5,7 +5,7 @@ CMP=g++
 
 
 rshell: src/main.cpp
-	$(CMP) $(FLG) src/main.cpp -o rshell.out
+	$(CMP) $(FLG) src/main.cpp -o src/rshell.out
 
 
 clean:
