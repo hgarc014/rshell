@@ -110,7 +110,7 @@ void executeCommand(const string &input,const char cmd[]){
     }
     argv[i] = 0;
     if(execvp(argv[0],argv) == -1){
-        perror("execvp");
+        perror(argv[0]);
         exit(1);
     }
 }
