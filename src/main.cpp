@@ -5,86 +5,113 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <boost/tokenizer.hpp>
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
 using namespace std;
+using namespace boost;
 
-//void executeCommand(string input){
-//    if(input.find(" ") != string::npos){
-//        string cmd = input.substr(0, input.find(" "));
-//        cmd = cmd.substr(0, cmd.find(";"));
-//        const *argv[]
-//        if(execvp() == -1){
-//            perror("execvp");
-//            exit(1);
-//        }
-//    }
-//}
+#define TOKEN tokenizer<char_separator<char> >
+#define SEP char_separator<char>
 
-void executeCommand(string input){
-    //int sz = input.size()/2;
-    cerr << "input=" << input << endl;
-    char *argv[50];
-    int space = -1;
-    int i = 0;
-    if(input.find(" ") == string::npos){
+void executeCommand(const string &input, const char cmd[]);
+void createCommand(const string &input,const char cmd[]);
+void printUM();
 
-    }
-    for( ; input.find(" ") != string::npos; ++i){
-        space = input.find(" ");
-        argv[i] = new char[input.substr(0, space).size()];
-        strcpy(argv[i],input.substr(0, space).c_str());
-        cerr << "Added=" << input.substr(0,space) << endl;
-        input = input.substr(space+1);
-        cerr << "next=" << input << endl;
-    }
-    argv[i] = new char[input.size()];
-    strcpy(argv[i], input.c_str());
-    argv[i + 1] = 0;
-    if(execvp(argv[0],argv) == -1){
-        perror("execvp in executeCommand");
-        exit(1);
+const char SEMIS[] =";";
+const char ANDS[] = "&&";
+const char ORS[] = "||";
+const char EXIT[] = "exit";
+const int SZ = 50;
+
+int main(){
+    printUM();
+    string input;
+    while(getline(cin, input)){
+        if(input.find("#") != string::npos){
+            cout << input << endl;
+            input = input.substr(0,input.find("#"));
+            cout << input << endl;
+        }
+        if(input.find("&&") != string::npos){
+            createCommand(input, ANDS);
+        }else if(input.find("||") != string::npos){
+            createCommand(input, ORS);
+        }else{
+            createCommand(input, SEMIS);
+        }
+        printUM();
     }
 }
+void printUM(){
+    char *user = getlogin();
+    char machine[SZ];
 
-int main()
-{
-    cout << "$";
-    string input;
-//
-    while(getline(cin, input)){
-        //TODO: do other commands before exiting
-        if(input.find("exit") != string::npos)
-            exit(0);
-        cout << "input=" << input << endl;
-        executeCommand(input.substr(0,input.find(";")));
-        cout << "$";
+    if(user != NULL && gethostname(machine, SZ) != -1){
+        cout << user << "@" << machine << "$ ";
+    }else{
+        cout << "$ ";
     }
+//    delete [] user;
+//    delete [] machine;
+}
 
-//    if(input == "exit"){
-//        exit(1);
-//    }
-//    if(input.find("#") != string::npos)
-//        input = input.substr(0, input.find("#"));
-//    int pid = fork();
-//    if(pid == 0){
-//        char *argv[10];
-//        argv[0] = new char[10];
-//        strcpy(argv[0], input.c_str());
-//        cout << "input=" << argv[0] << endl;
-//        argv[1]=0;
-//        argv[2]=0;
-//       if(execvp(argv[0], argv) == -1){
-//            perror("execvp");
-//            exit(1);
-//        }
-//    }else{
-//        if( wait(0))
-//            perror("Wait");
-//    }
+void createCommand(const string &input,const char cmd[]){
 
-    return 0;
+        SEP sep(cmd);
+        TOKEN tok(input, sep);
+        TOKEN::iterator it = tok.begin();
+        for(; it != tok.end(); ++it){
+            int id =fork();
+            if(id == -1){
+                perror("FORK");
+                exit(1);
+            }
+            else if(id == 0){
+                string temp = *it;
+                executeCommand(temp,cmd);
+            }
+            else{
+                int status = 0;
+                if( wait(&status)== -1){
+                    perror("wait");
+                    exit(1);
+                }
+                bool childDieNormal = WIFEXITED(status);
+                int childExit = WEXITSTATUS(status);
+                if(childDieNormal && childExit == 1 && strcmp(cmd, ANDS) == 0){
+                    return;
+                }else if(childDieNormal && childExit == 0 && strcmp(cmd, ORS) == 0){
+                    return;
+                }else if(childDieNormal && childExit == 10){
+                    exit(0);
+                }
+
+            }
+        }
+}
+
+void executeCommand(const string &input,const char cmd[]){
+    char *argv[SZ];
+
+    SEP sep(" ");
+    TOKEN tok(input, sep);
+    TOKEN::iterator it = tok.begin();
+    if((*it) == EXIT){
+        exit(10);
+    }
+    int i = 0;
+    for(; it != tok.end(); ++it,++i){
+        argv[i] =new char[(*it).size()];
+        strcpy(argv[i],(*it).c_str());
+    }
+    argv[i] = 0;
+    if(execvp(argv[0],argv) == -1){
+        perror("execvp");
+        exit(1);
+    }
 }
 
