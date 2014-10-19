@@ -10,3 +10,6 @@
 *terminal executes commands before exiting terminal
     *ex. ls;ls;ls;pwd;exit
 
+BUG:
+    *when specifying a list and having an extra space at the end
+    *
