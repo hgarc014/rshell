@@ -95,12 +95,12 @@ void createCommand(const string &input,const char cmd[]){
 }
 
 void executeCommand(const string &input,const char cmd[]){
-    char *argv[SZ];
+    char **argv;
 
     SEP sep(" ");
     TOKEN tok(input, sep);
     TOKEN::iterator it = tok.begin();
-    if((*it) == EXIT){
+    if(it != tok.end() && (*it) == EXIT){
         exit(10);
     }
     int i = 0;
