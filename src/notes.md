@@ -9,5 +9,7 @@
 * terminal executes commands before exiting terminal
   * ex. ls;ls;ls;pwd;exit
 
+* ssh hgarc014@hammmer.cs.ucr.edu
+  *cs100
 BUG:
     *
