@@ -1,0 +1,24 @@
+ls && ls && l
+ls && echo  && x && echo
+ls && && && pwd
+&& && pwd
+
+
+l || x || j || ls
+ls || x || ls
+ls || || ||
+|| || || ls
+l || || || ls
+
+ls; x ; echo;
+ls; ls; pwd
+ls -al; ls -a; pwd;
+           ls            -a                -l           ;        ls;
+ls        -al       ;     ls
+
+clear; echo this is a #test
+ls -al #; ls; pwd
+
+echo spacing               is              large
+
+

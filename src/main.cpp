@@ -32,9 +32,7 @@ int main(){
     string input;
     while(getline(cin, input)){
         if(input.find("#") != string::npos){
-            cout << input << endl;
             input = input.substr(0,input.find("#"));
-            cout << input << endl;
         }
         if(input.find("&&") != string::npos){
             createCommand(input, ANDS);
@@ -46,6 +44,8 @@ int main(){
         printUM();
     }
 }
+
+
 void printUM(){
     char *user = getlogin();
     char machine[SZ];
@@ -53,10 +53,9 @@ void printUM(){
     if(user != NULL && gethostname(machine, SZ) != -1){
         cout << user << "@" << machine << "$ ";
     }else{
+        cout << "Couldn't get User or HostName. Displaying regular $" << endl;
         cout << "$ ";
     }
-//    delete [] user;
-//    delete [] machine;
 }
 
 void createCommand(const string &input,const char cmd[]){
@@ -77,7 +76,7 @@ void createCommand(const string &input,const char cmd[]){
             else{
                 int status = 0;
                 if( wait(&status)== -1){
-                    perror("wait");
+                    perror("WAIT");
                     exit(1);
                 }
                 bool childDieNormal = WIFEXITED(status);
@@ -89,13 +88,12 @@ void createCommand(const string &input,const char cmd[]){
                 }else if(childDieNormal && childExit == 10){
                     exit(0);
                 }
-
             }
         }
 }
 
 void executeCommand(const string &input,const char cmd[]){
-    char **argv;
+    char *argv[SZ];
 
     SEP sep(" ");
     TOKEN tok(input, sep);

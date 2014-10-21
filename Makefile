@@ -5,12 +5,14 @@ CMP=g++
 
 
 rshell: src/main.cpp
-	$(CMP) $(FLG) src/main.cpp -o src/rshell.out
+	@if [ ! -d bin/ ];\
+	then \
+	mkdir bin; \
+	fi
+	$(CMP) $(FLG) src/main.cpp -o bin/rshell
 
 
 clean:
-	rm *.o rshell.out
-#example:
-#a.out : BST.h main.cc
-#	g++ $(FLAGS) main.cc
-#
+	rm bin/*.o bin/rshell.out
+
+
