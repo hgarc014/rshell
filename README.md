@@ -46,6 +46,11 @@ command and then look for a new line of commands
 
 #REMOVE BELOW
 
+git tag --a NAME -m "MESSAGE"
+git tag
+git push --tags
+
+
 * can input a series of `&&`, `||`, or `;` in one line.
   * having different symbols for one line will cause execvp to fail
     * Ex. `ls && ls || ls ; ls`
