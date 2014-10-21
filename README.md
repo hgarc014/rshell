@@ -33,6 +33,7 @@ then run the program by running
   * `ls && ls || ls ;exit`
 2. Having same symbol without arguements will not throw an error
   * `ls && && && ls` will execute ls twice and ignore `&&` symbols (same for `||` and `;`)
+  * Acts similarly when given `&&&`
 3. will not ask for continued input if an input is like `ls &&` will just execute
 command and then look for a new line of commands
 4. if a bash script contains the let command rshell will not know what this is.
@@ -62,7 +63,7 @@ command and then look for a new line of commands
   * rshell is limited to 50 characters for hostMachine name
   * rshell will print out a error message and regular $ if hostName or Machine could not be found
 * rshell can only handle at least 100,000 flags.
-  *so, anything more than that may have the command fail.
+  * so, anything more than that may have the command fail.
 * rshell executes commands before exiting terminal
   * Ex. `ls;ls;ls;pwd;exit`
 * rshell cannot use let command in a bash script

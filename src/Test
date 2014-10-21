@@ -21,4 +21,6 @@ ls -al #; ls; pwd
 
 echo spacing               is              large
 
+ls &&& pwd
+l ||| p ||| ls
 

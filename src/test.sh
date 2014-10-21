@@ -15,6 +15,9 @@ done
 #let I=I+1
 #done
 
+COUNT="$COUNT ; "
+echo $COUNT
+
 echo $I
 eval $COUNT
 
