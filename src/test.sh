@@ -1,7 +1,7 @@
 
 COUNT="ls "
 I=0
-MAX=100000
+MAX=10
 echo about to execute $MAX flags, this may take a minute...
 
 for i in `seq 1 $MAX`;

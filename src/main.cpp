@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <pwd.h>
 
 #include <boost/tokenizer.hpp>
 
@@ -19,17 +20,33 @@ using namespace boost;
 
 void executeCommand(const string &input, const char cmd[]);
 void createCommand(const string &input,const char cmd[]);
-void printUM();
 
 const char SEMIS[] =";";
 const char ANDS[] = "&&";
 const char ORS[] = "||";
 const char EXIT[] = "exit";
 const int SZ = 50;
+const string LINE('-',40);
 
 int main(){
-    printUM();
-    string input;
+
+    char machine[SZ];
+    string user,
+           all,
+           input;
+
+    struct passwd *pass = getpwuid(getuid());
+
+    if(pass != NULL && gethostname(machine,SZ) != -1){
+        user = pass->pw_name;
+        all = user + "@" + machine + "$ ";
+    }else{
+        cout << LINE << endl
+            << "Couldn't find userLogin or HostMachine displaying $ instead" << endl;
+        all = "$ ";
+    }
+
+    cout << all;
     while(getline(cin, input)){
         if(input.find("#") != string::npos){
             input = input.substr(0,input.find("#"));
@@ -41,55 +58,40 @@ int main(){
         }else{
             createCommand(input, SEMIS);
         }
-        printUM();
-    }
-}
-
-
-void printUM(){
-    char *user = getlogin();
-    char machine[SZ];
-
-    if(user != NULL && gethostname(machine, SZ) != -1){
-        cout << user << "@" << machine << "$ ";
-    }else{
-        cout << "Couldn't get User or HostName. Displaying regular $" << endl;
-        cout << "$ ";
+        cout << all;
     }
 }
 
 void createCommand(const string &input,const char cmd[]){
 
-        SEP sep(cmd);
-        TOKEN tok(input, sep);
-        TOKEN::iterator it = tok.begin();
-        for(; it != tok.end(); ++it){
-            int id =fork();
-            if(id == -1){
-                perror("FORK");
+    SEP sep(cmd);
+    TOKEN tok(input, sep);
+    TOKEN::iterator it = tok.begin();
+    for(; it != tok.end(); ++it){
+        int id =fork();
+        if(id == -1){
+            perror("FORK");
+            exit(1);
+        }else if(id == 0){
+            string temp = *it;
+            executeCommand(temp,cmd);
+        }else{
+            int status = 0;
+            if( wait(&status)== -1){
+                perror("WAIT");
                 exit(1);
             }
-            else if(id == 0){
-                string temp = *it;
-                executeCommand(temp,cmd);
-            }
-            else{
-                int status = 0;
-                if( wait(&status)== -1){
-                    perror("WAIT");
-                    exit(1);
-                }
-                bool childDieNormal = WIFEXITED(status);
-                int childExit = WEXITSTATUS(status);
-                if(childDieNormal && childExit == 1 && strcmp(cmd, ANDS) == 0){
-                    return;
-                }else if(childDieNormal && childExit == 0 && strcmp(cmd, ORS) == 0){
-                    return;
-                }else if(childDieNormal && childExit == 10){
-                    exit(0);
-                }
+            bool childDieNormal = WIFEXITED(status);
+            int childExit = WEXITSTATUS(status);
+            if(childDieNormal && childExit == 1 && strcmp(cmd, ANDS) == 0){
+                return;
+            }else if(childDieNormal && childExit == 0 && strcmp(cmd, ORS) == 0){
+                return;
+            }else if(childDieNormal && childExit == 10){
+                exit(0);
             }
         }
+    }
 }
 
 void executeCommand(const string &input,const char cmd[]){
