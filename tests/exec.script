@@ -1,0 +1,90 @@
+Script started on Tue 21 Oct 2014 03:48:39 PM PDT
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ make
+g++ -Wall -Werror -ansi -pedantic src/main.cpp -o bin/rshell
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ rs[K[Kbin/rshell 
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #show command wit    s with ending ;
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls -a; mkdir removeme; touch removeme/deleteme;
+.   bin   .gitignore  Makefile	README.md  src	  testscript.sh
+..  .git  LICENSE     neat	removeMe   tests
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #show  s commands work without semi colon at end
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls ; ls removeme
+bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
+deleteme
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #show commands stop with &&
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls removeme/ && touch neat && l && echo hi
+deleteme
+l: No such file or directory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #show commands work if close together
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls;pwd;ls removeme/;
+bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
+/home/henry/cs100/rshell
+deleteme
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #show commands will alle  execute with &&
+henry@henry-HP-ENVY-dv7-Notebook-PC$ cat neat && ls && pwd
+bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
+/home/henry/cs100/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows OR will continue until command executs s    tes successfully
+henry@henry-HP-ENVY-dv7-Notebook-PC$ l || x || j || k || echo i will be printed
+l: No such file or directory
+x: No such file or directory
+j: No such file or directory
+k: No such file or directory
+i will be printed
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows OR stops after correct command
+henry@henry-HP-ENVY-dv7-Notebook-PC$ l || ls || n || pwd
+l: No such file or directory
+bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows commands continue if error in ; series
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls; x ; y ; rm neat; echo removed neat
+bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
+x: No such file or directory
+y: No such file or directory
+removed neat
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #show one command works correctly
+henry@henry-HP-ENVY-dv7-Notebook-PC$ pwd
+/home/henry/cs100/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows commands wi ork with spaces between them and connectors
+henry@henry-HP-ENVY-dv7-Notebook-PC$ clear      ;        ls    -a    -l    ;    pwd
+[H[2Jtotal 52
+drwxrwxr-x 8 henry henry 4096 Oct 21 15:55 .
+drwxrwxr-x 5 henry henry 4096 Oct 18 21:39 ..
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:48 bin
+drwxrwxr-x 8 henry henry 4096 Oct 21 15:45 .git
+-rw-rw-r-- 1 henry henry  343 Oct 17 21:44 .gitignore
+-rw-rw-r-- 1 henry henry   39 Oct 15 17:54 LICENSE
+-rw-rw-r-- 1 henry henry  205 Oct 20 23:14 Makefile
+-rw-rw-r-- 1 henry henry 2275 Oct 21 15:07 README.md
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:49 removeme
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:47 removeMe
+drwxrwxr-x 2 henry henry 4096 Oct 21 13:12 src
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:46 tests
+-r-xr-xr-x 1 henry henry 1297 Oct 21 15:42 testscript.sh
+/home/henry/cs100/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows command works with spaces between them without a connector
+henry@henry-HP-ENVY-dv7-Notebook-PC$     ls     -al    
+total 52
+drwxrwxr-x 8 henry henry 4096 Oct 21 15:55 .
+drwxrwxr-x 5 henry henry 4096 Oct 18 21:39 ..
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:48 bin
+drwxrwxr-x 8 henry henry 4096 Oct 21 15:45 .git
+-rw-rw-r-- 1 henry henry  343 Oct 17 21:44 .gitignore
+-rw-rw-r-- 1 henry henry   39 Oct 15 17:54 LICENSE
+-rw-rw-r-- 1 henry henry  205 Oct 20 23:14 Makefile
+-rw-rw-r-- 1 henry henry 2275 Oct 21 15:07 README.md
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:49 removeme
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:47 removeMe
+drwxrwxr-x 2 henry henry 4096 Oct 21 13:12 src
+drwxrwxr-x 2 henry henry 4096 Oct 21 15:46 tests
+-r-xr-xr-x 1 henry henry 1297 Oct 21 15:42 testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows comments are ignored in a command
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls; echo this is a #test ; vim newfile
+bin  LICENSE  Makefile	README.md  removeme  removeMe  src  tests  testscript.sh
+this is a
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows exit      s commands will execute before exiting
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls && & rm -rf removeMe removeme ^[[D     . /                  removeme/ && ls && exit
+bin  LICENSE  Makefile	README.md  removeme  removeMe  src  tests  testscript.sh
+bin  LICENSE  Makefile	README.md  removeMe  src  tests  testscript.sh
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ exit
+exit
+
+Script done on Tue 21 Oct 2014 04:00:03 PM PDT

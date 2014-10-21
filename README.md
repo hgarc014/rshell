@@ -43,6 +43,8 @@ command and then look for a new line of commands
   and the prompt will be a `$` instead of hostname and username
 7. cannot run background programs
   * `google-chrome &`
+8. cannot run a command in quotes
+  * `"ls"`
 
 
 #------------REMOVE BELOW----------------
@@ -50,41 +52,4 @@ command and then look for a new line of commands
 git tag --a NAME -m "MESSAGE"
 git tag
 git push --tags
-
-##Commands to be tested...
-
-#shows and works correctly with an error at the end
-ls -a  && ls && l
-#shows AND will stop and not echo
-ls && pwd  && x && echo cant see me
-
-#shows OR will continue until a correct
-l || x || j || echo i should be printed
-#shows OR will stop after a correct command
-ls || x || echo i wont be printed
-
-#shows commands execute with ; at the end
-ls -al; ls -a; pwd;
-#shows commands execute with errors in a ; line example
-ls; x ; echo should see error for x and see me;
-#shows commands still execute if no ; is at the end
-ls; ls -l; pwd; echo test with no semi colon at end
-
-#shows command works without a connector
-pwd
-#shows command works with spaces between command and arguements with connector
-    ls            -a         -l    ;
-#shows command works with spaces between command and arguements without connector
-ls        -al
-
-#
-clear; echo this is a #test
-#
-ls -al #; ls; pwd
-
-#
-echo spacing               is              large  not with echo
-
-
-
 
