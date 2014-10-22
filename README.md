@@ -1,5 +1,7 @@
 #rshell
 
+Runs commands with execvp in order to produce a terminal experience.
+
 
 ##License information in LICENSE file
 
@@ -8,7 +10,6 @@
 ##File List
 
 * main.cpp
-* Makefile
 
 
 
@@ -31,8 +32,11 @@ then run the program by running
 
 1. having different symbols in one line will cause an error in execvp
   * `ls && ls || ls ;exit`
+  * running | or & will cause errors because we do not have piping or giving back terminal implemented
 2. Having same symbol without arguements will not throw an error
   * `ls && && && ls` will execute ls twice and ignore `&&` symbols (same for `||` and `;`)
+  * this is also the cse if && is first
+    * `&& ls`
   * Acts similarly when given `&&&` `|||` `;;;`
 3. Having only one symbol will not execute commands
 4. will not ask for continued input if an input is like `ls &&` will just execute
@@ -45,6 +49,7 @@ command and then look for a new line of commands
   * `google-chrome &`
 8. cannot run a command in quotes
   * `"ls"`
+9.
 
 
 #------------REMOVE BELOW----------------

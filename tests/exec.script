@@ -1,90 +1,185 @@
-Script started on Tue 21 Oct 2014 03:48:39 PM PDT
+Script started on Tue 21 Oct 2014 07:54:06 PM PDT
 ]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ make
 g++ -Wall -Werror -ansi -pedantic src/main.cpp -o bin/rshell
-]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ rs[K[Kbin/rshell 
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #show command wit    s with ending ;
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls -a; mkdir removeme; touch removeme/deleteme;
-.   bin   .gitignore  Makefile	README.md  src	  testscript.sh
-..  .git  LICENSE     neat	removeMe   tests
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #show  s commands work without semi colon at end
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls ; ls removeme
-bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
-deleteme
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #show commands stop with &&
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls removeme/ && touch neat && l && echo hi
-deleteme
-l: No such file or directory
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #show commands work if close together
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls;pwd;ls removeme/;
-bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
-/home/henry/cs100/rshell
-deleteme
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #show commands will alle  execute with &&
-henry@henry-HP-ENVY-dv7-Notebook-PC$ cat neat && ls && pwd
-bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
-/home/henry/cs100/rshell
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows OR will continue until command executs s    tes successfully
-henry@henry-HP-ENVY-dv7-Notebook-PC$ l || x || j || k || echo i will be printed
-l: No such file or directory
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ /bin/[K[K[K[K[Kbin/rshell 
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing commands with ; at the end
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls -a; mkdir removeMe    ve; touch remove/deleteMe; ls remove/ ;  ;
+.   bin   .gitignore  Makefile	 removeMe  tests
+..  .git  LICENSE     README.md  src	   testscript.sh
+deleteMe
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing commands work with no semi colon at the end
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls ; ls remove/
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+deleteMe
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows && works correctly with error at end
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls remove && touch remove/neat && touch remove/neatBeans && x
+deleteMe
 x: No such file or directory
-j: No such file or directory
-k: No such file or directory
-i will be printed
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows OR stops after correct command
-henry@henry-HP-ENVY-dv7-Notebook-PC$ l || ls || n || pwd
-l: No such file or directory
-bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows commands continue if error in ; series
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls; x ; y ; rm neat; echo removed neat
-bin  LICENSE  Makefile	neat  README.md  removeme  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing && wo  exit ts as soon as it fails
+henry@henry-HP-ENVY-dv7-Notebook-PC$ cat remove/neatBeans && x && ls -al **  && echo yoo
+x: No such file or directory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing commands work close together
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls;pwd;echo test
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+/home/henry/cs100/rshell
+test
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing OR  || will continue until a correct command
+henry@henry-HP-ENVY-dv7-Notebook-PC$ x || y || z || x || ls || echo testing
 x: No such file or directory
 y: No such file or directory
-removed neat
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #show one command works correctly
+z: No such file or directory
+x: No such file or directory
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing || will execute first command and stop
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls || x || y || echo test
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows commands execute with errors in  for ;
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls; x; y; echo error for x and y;
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+x: No such file or directory
+y: No such file or directory
+error for x and y
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing command executes i with only      no connector (one command)
 henry@henry-HP-ENVY-dv7-Notebook-PC$ pwd
 /home/henry/cs100/rshell
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows commands wi ork with spaces between them and connectors
-henry@henry-HP-ENVY-dv7-Notebook-PC$ clear      ;        ls    -a    -l    ;    pwd
-[H[2Jtotal 52
-drwxrwxr-x 8 henry henry 4096 Oct 21 15:55 .
-drwxrwxr-x 5 henry henry 4096 Oct 18 21:39 ..
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:48 bin
-drwxrwxr-x 8 henry henry 4096 Oct 21 15:45 .git
--rw-rw-r-- 1 henry henry  343 Oct 17 21:44 .gitignore
--rw-rw-r-- 1 henry henry   39 Oct 15 17:54 LICENSE
--rw-rw-r-- 1 henry henry  205 Oct 20 23:14 Makefile
--rw-rw-r-- 1 henry henry 2275 Oct 21 15:07 README.md
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:49 removeme
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:47 removeMe
-drwxrwxr-x 2 henry henry 4096 Oct 21 13:12 src
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:46 tests
--r-xr-xr-x 1 henry henry 1297 Oct 21 15:42 testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing large spaces between connector and arguements
+henry@henry-HP-ENVY-dv7-Notebook-PC$ l      ls           -a         -l     ;   pwd  ;
+total 64
+drwxrwxr-x 8 henry henry  4096 Oct 21 19:57 .
+drwxrwxr-x 5 henry henry  4096 Oct 18 21:39 ..
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:54 bin
+drwxrwxr-x 8 henry henry  4096 Oct 21 19:39 .git
+-rw-rw-r-- 1 henry henry   343 Oct 17 21:44 .gitignore
+-rw-rw-r-- 1 henry henry    39 Oct 15 17:54 LICENSE
+-rw-rw-r-- 1 henry henry   205 Oct 20 23:14 Makefile
+-rw-rw-r-- 1 henry henry  1300 Oct 21 19:16 README.md
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:56 remove
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:50 removeMe
+drwxrwxr-x 2 henry henry  4096 Oct 21 13:12 src
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:54 tests
+-r-xr-xr-x 1 henry henry  1315 Oct 21 19:43 testscript.sh
+-rw------- 1 henry henry 12288 Oct 21 19:57 .testscript.sh.swp
 /home/henry/cs100/rshell
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows command works with spaces between them without a connector
-henry@henry-HP-ENVY-dv7-Notebook-PC$     ls     -al    
-total 52
-drwxrwxr-x 8 henry henry 4096 Oct 21 15:55 .
-drwxrwxr-x 5 henry henry 4096 Oct 18 21:39 ..
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:48 bin
-drwxrwxr-x 8 henry henry 4096 Oct 21 15:45 .git
--rw-rw-r-- 1 henry henry  343 Oct 17 21:44 .gitignore
--rw-rw-r-- 1 henry henry   39 Oct 15 17:54 LICENSE
--rw-rw-r-- 1 henry henry  205 Oct 20 23:14 Makefile
--rw-rw-r-- 1 henry henry 2275 Oct 21 15:07 README.md
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:49 removeme
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:47 removeMe
-drwxrwxr-x 2 henry henry 4096 Oct 21 13:12 src
-drwxrwxr-x 2 henry henry 4096 Oct 21 15:46 tests
--r-xr-xr-x 1 henry henry 1297 Oct 21 15:42 testscript.sh
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows comments are ignored in a command
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls; echo this is a #test ; vim newfile
-bin  LICENSE  Makefile	README.md  removeme  removeMe  src  tests  testscript.sh
-this is a
-henry@henry-HP-ENVY-dv7-Notebook-PC$ #shows exit      s commands will execute before exiting
-henry@henry-HP-ENVY-dv7-Notebook-PC$ ls && & rm -rf removeMe removeme ^[[D     . /                  removeme/ && ls && exit
-bin  LICENSE  Makefile	README.md  removeme  removeMe  src  tests  testscript.sh
-bin  LICENSE  Makefile	README.md  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing command works with spaces and no connector
+henry@henry-HP-ENVY-dv7-Notebook-PC$    ls             -al
+total 64
+drwxrwxr-x 8 henry henry  4096 Oct 21 19:57 .
+drwxrwxr-x 5 henry henry  4096 Oct 18 21:39 ..
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:54 bin
+drwxrwxr-x 8 henry henry  4096 Oct 21 19:39 .git
+-rw-rw-r-- 1 henry henry   343 Oct 17 21:44 .gitignore
+-rw-rw-r-- 1 henry henry    39 Oct 15 17:54 LICENSE
+-rw-rw-r-- 1 henry henry   205 Oct 20 23:14 Makefile
+-rw-rw-r-- 1 henry henry  1300 Oct 21 19:16 README.md
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:56 remove
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:50 removeMe
+drwxrwxr-x 2 henry henry  4096 Oct 21 13:12 src
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:54 tests
+-r-xr-xr-x 1 henry henry  1315 Oct 21 19:43 testscript.sh
+-rw------- 1 henry henry 12288 Oct 21 19:57 .testscript.sh.swp
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shoinw   wing comments ignored in echo
+henry@henry-HP-ENVY-dv7-Notebook-PC$ clear; echo this is a test #;       #test ; vim createNewFile
+[H[2Jthis is a
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing comments ignored without echo
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls -al ; $ls ; pwd^[[D^[[D                 #ls ; pwd
+total 64
+drwxrwxr-x 8 henry henry  4096 Oct 21 19:57 .
+drwxrwxr-x 5 henry henry  4096 Oct 18 21:39 ..
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:54 bin
+drwxrwxr-x 8 henry henry  4096 Oct 21 19:39 .git
+-rw-rw-r-- 1 henry henry   343 Oct 17 21:44 .gitignore
+-rw-rw-r-- 1 henry henry    39 Oct 15 17:54 LICENSE
+-rw-rw-r-- 1 henry henry   205 Oct 20 23:14 Makefile
+-rw-rw-r-- 1 henry henry  1300 Oct 21 19:16 README.md
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:56 remove
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:50 removeMe
+drwxrwxr-x 2 henry henry  4096 Oct 21 13:12 src
+drwxrwxr-x 2 henry henry  4096 Oct 21 19:54 tests
+-r-xr-xr-x 1 henry henry  1315 Oct 21 19:43 testscript.sh
+-rw------- 1 henry henry 12288 Oct 21 19:57 .testscript.sh.swp
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #executing rshell within e rshell twice and exiting it twice
+henry@henry-HP-ENVY-dv7-Notebook-PC$ bin/r	shell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ bin/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ exit
+henry@henry-HP-ENVY-dv7-Notebook-PC$ exit
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #executing rshell and running a come mand
+henry@henry-HP-ENVY-dv7-Notebook-PC$ r bin/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls removeme
+ls: cannot access removeme: No such file or directory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls removeme/
+ls: cannot access removeme/: No such file or directory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls -al      exit
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #shoi wing ls with previous die rectory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls ../
+a.out  main.cpp  openLecture.sh  README  rshell  test.sh  ucr-cs100  update.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing ls without a / for previous directory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls ..
+a.out  main.cpp  openLecture.sh  README  rshell  test.sh  ucr-cs100  update.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing g++ by making a test file and deleting it
+henry@henry-HP-ENVY-dv7-Notebook-PC$ touch     ls; touch fileremove.cpp; ls
+bin  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+bin  fileremove.cpp  LICENSE  Makefile	README.md  remove  removeMe  src  tests  testscript.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ vim fileremove.cpp
+[32;1H[?1049h[?1h=[?1000h[2;1H▽[6n[1;1H  [1;1H[1;32r[?12;25h[?12l[?25h[27m[m[H[2J[?25l[32;1H"fileremove.cpp" 0L, 0C[>c[1;1H[33m  1 [m
+[1m[34m~                                                                                              [3;1H~                                                                                              [4;1H~                                                                                              [5;1H~                                                                                              [6;1H~                                                                                              [7;1H~                                                                                              [8;1H~                                                                                              [9;1H~                                                                                              [10;1H~                                                                                              [11;1H~                                                                                              [12;1H~                                                                                              [13;1H~                                                                                              [14;1H~                                                                                              [15;1H~                                                                                              [16;1H~                                                                                              [17;1H~                                                                                              [18;1H~                                                                                              [19;1H~                                                                                              [20;1H~                                                                                              [21;1H~                                                                                              [22;1H~                                                                                              [23;1H~                                                                                              [24;1H~                                                                                              [25;1H~                                                                                              [26;1H~                                                                                              [27;1H~                                                                                              [28;1H~                                                                                              [29;1H~                                                                                              [30;1H~                                                                                              [31;1H~                                                                                              [m[32;78H0,0-1[9CAll[1;5H[?12l[?25h[?1000l[?1006h[?1002h[?1006l[?1002l[?1006h[?1002hP+q436f\P+q6b75\P+q6b64\P+q6b72\P+q6b6c\P+q2332\P+q2334\P+q2569\P+q2a37\P+q6b31\[?25l[32;68Hi[1;5H[32;68H [1;5H[32;1H[1m-- INSERT --[m[32;13H[K[32;78H0,1[11CAll[1;5H[?12l[?25h[?25l#[32;78H1,2[1;6H[?12l[?25h[?25li[32;80H3[1;7H[?12l[?25h[?25ln[32;80H4[1;8H[?12l[?25h[?25lc[32;80H5[1;9H[?12l[?25h[?25ll[32;80H6[1;10H[?12l[?25h[?25lu[32;80H7[1;11H[?12l[?25h[?25ld[32;80H8[1;12H[?12l[?25h[?25le[32;80H9[1;13H[?12l[?25h[?25l[32;80H10[1;14H[?12l[?25h[?25l[1;5H[35m#include <[m[32;81H1[1;15H[?12l[?25h[?25li[32;81H2[1;16H[?12l[?25h[?25lo[32;81H3[1;17H[?12l[?25h[?25ls[32;81H4[1;18H[?12l[?25h[?25lt[32;81H5[1;19H[?12l[?25h[?25lr[32;81H6[1;20H[?12l[?25h[?25le[32;81H7[1;21H[?12l[?25h[?25la[32;81H8[1;22H[?12l[?25h[?25lm[32;81H9[1;23H[?12l[?25h[?25l[1;14H[31m<iostream>[m[32;80H20[1;24H[?12l[?25h[?25l
+[33m  2 [m[2;5H[K[32;78H2,1 [2;5H[?12l[?25h[?25l
+[33m  3 [m[3;5H[K[32;78H3[3;5H[?12l[?25h[?25lu[32;80H2[3;6H[?12l[?25h[?25ls[32;80H3[3;7H[?12l[?25h[?25li[32;80H4[3;8H[?12l[?25h[?25ln[32;80H5[3;9H[?12l[?25h[?25l[33musing[m[32;80H6[3;10H[?12l[?25h[?25l[32;80H7[3;11H[?12l[?25h[?25ln[32;80H8[3;12H[?12l[?25h[?25la[32;80H9[3;13H[?12l[?25h[?25lm[32;80H10[3;14H[?12l[?25h[?25le[32;81H1[3;15H[?12l[?25h[?25ls[32;81H2[3;16H[?12l[?25h[?25lp[32;81H3[3;17H[?12l[?25h[?25la[32;81H4[3;18H[?12l[?25h[?25lc[32;81H5[3;19H[?12l[?25h[?25l[3;11H[32mnamespace[m[32;81H6[3;20H[?12l[?25h[?25l[32;81H7[3;21H[?12l[?25h[?25ls[32;81H8[3;22H[?12l[?25h[?25lt[32;81H9[3;23H[?12l[?25h[?25ld[32;80H20[3;24H[?12l[?25h[?25l;[32;81H1[3;25H[?12l[?25h[?25l
+[33m  4 [m[4;5H[K[32;78H4,1 [4;5H[?12l[?25h[?25l
+[33m  5 [m[5;5H[K[32;78H5[5;5H[?12l[?25h[?25li[32;80H2[5;6H[?12l[?25h[?25ln[32;80H3[5;7H[?12l[?25h[?25l[32mint[m[32;80H4[5;8H[?12l[?25h[?25l[32;80H5[5;9H[?12l[?25h[?25lm[32;80H6[5;10H[?12l[?25h[?25la[32;80H7[5;11H[?12l[?25h[?25li[32;80H8[5;12H[?12l[?25h[?25ln[32;80H9[5;13H[?12l[?25h[?25le[32;80H10[5;14H[?12l[?25h[?25l[5;13H[K[32;80H9 [5;13H[?12l[?25h[?25l[32;1H[K[5;13H[46m()[m[32;78H5,10[10CAll[5;14H[?12l[?25h[?25l[32;68Hi[5;14H[32;68H [5;14H[32;1H[1m-- INSERT --[m[32;78H[K[32;78H5,10[10CAll[5;14H[?12l[?25h[?25l[1C[1m[37m[41m)[m()[32;81H1[5;15H[?12l[?25h[?25l[5;15H[K[6;1H[33m  6 [m    [1m[37m[41m)[m[6;10H[K[32;78H6,5 [6;9H[?12l[?25h[?25l[6;9H[K[6;9H[?12l[?25h[?25l[32;1H[K[6;5H[46m{[m
+[33m  7 [m[46m}[m[7;6H[K[32;78H7,1[11CAll[7;5H[?12l[?25h[?25l[32;78H6[6;5H[?12l[?25h[?25l[32;68Ho[6;5H[32;68H [7;9H[32;1H[1m-- INSERT --[m[32;78H[K[32;78H7,5[11CTop[7;5H[46m [m
+[33m  8 [m}[8;6H[K[6;5H{[7;5H    [?12l[?25h[?25lr[32;80H6[11CAll[7;10H[?12l[?25h[?25le[32;80H7[7;11H[?12l[?25h[?25lt[32;80H8[7;12H[?12l[?25h[?25lu[32;80H9[7;13H[?12l[?25h[?25lr[32;80H10[7;14H[?12l[?25h[?25l[33mreturn[m[32;81H1[7;15H[?12l[?25h[?25l[32;81H2[7;16H[?12l[?25h[?25l;[32;81H3[7;17H[?12l[?25h[?25l[31m0[m[32;81H4[7;18H[?12l[?25h[?25l[7;17H[K[32;81H3[7;17H[?12l[?25h[?25l[7;16H[K[32;81H2[7;16H[?12l[?25h[?25l;[32;81H3[7;17H[?12l[?25h[?25l[7;16H[K[32;81H2[7;16H[?12l[?25h[?25l[31m0[m[32;81H3[7;17H[?12l[?25h[?25l;[32;81H4[7;18H[?12l[?25h[?25l[6;5H[46m{[8;5H}[m[32;78H[K[32;78H6,2[11CAll[6;6H[?12l[?25h[?25l[7;9H[K[8;5H[46m [m   [33mreturn[m [31m0[m;
+[33m  9 [m}[9;6H[K[6;5H{[8;5H [32;78H7,5[7;9H[?12l[?25h[?25lc[32;80H6[7;10H[?12l[?25h[?25lo[32;80H7[7;11H[?12l[?25h[?25lu[32;80H8[7;12H[?12l[?25h[?25lt[32;80H9[7;13H[?12l[?25h[?25l[32;80H10[7;14H[?12l[?25h[?25l<[32;81H1[7;15H[?12l[?25h[?25l<[32;81H2[7;16H[?12l[?25h[?25l[32;81H3[7;17H[?12l[?25h[?25l[31m"[m[32;81H4[7;18H[?12l[?25h[?25l[31mf[m[32;81H5[7;19H[?12l[?25h[?25l[31mi[m[32;81H6[7;20H[?12l[?25h[?25l[31ml[m[32;81H7[7;21H[?12l[?25h[?25l[31me[m[32;81H8[7;22H[?12l[?25h[?25l[31m [m[32;81H9[7;23H[?12l[?25h[?25l[31mt[m[32;80H20[7;24H[?12l[?25h[?25l[31mo[m[32;81H1[7;25H[?12l[?25h[?25l[31m [m[32;81H2[7;26H[?12l[?25h[?25l[31mb[m[32;81H3[7;27H[?12l[?25h[?25l[31me[m[32;81H4[7;28H[?12l[?25h[?25l[31m [m[32;81H5[7;29H[?12l[?25h[?25l[31mr[m[32;81H6[7;30H[?12l[?25h[?25l[31me[m[32;81H7[7;31H[?12l[?25h[?25l[31mm[m[32;81H8[7;32H[?12l[?25h[?25l[31mo[m[32;81H9[7;33H[?12l[?25h[?25l[31mv[m[32;80H30[7;34H[?12l[?25h[?25l[31me[m[32;81H1[7;35H[?12l[?25h[?25l[31md[m[32;81H2[7;36H[?12l[?25h[?25l[31m [m[32;81H3[7;37H[?12l[?25h[?25l[31mi[m[32;81H4[7;38H[?12l[?25h[?25l[31ms[m[32;81H5[7;39H[?12l[?25h[?25l[7;38H[K[32;81H4[7;38H[?12l[?25h[?25l[7;37H[K[32;81H3[7;37H[?12l[?25h[?25l[31mw[m[32;81H4[7;38H[?12l[?25h[?25l[31ma[m[32;81H5[7;39H[?12l[?25h[?25l[31ms[m[32;81H6[7;40H[?12l[?25h[?25l[31m [m[32;81H7[7;41H[?12l[?25h[?25l[31mr[m[32;81H8[7;42H[?12l[?25h[?25l[31ma[m[32;81H9[7;43H[?12l[?25h[?25l[31mn[m[32;80H40[7;44H[?12l[?25h[?25l[31m"[m[32;81H1[7;45H[?12l[?25h[?25l[32;81H2[7;46H[?12l[?25h[?25l<[32;81H3[7;47H[?12l[?25h[?25l<[32;81H4[7;48H[?12l[?25h[?25l[32;81H5[7;49H[?12l[?25h[?25le[32;81H6[7;50H[?12l[?25h[?25ld[32;81H7[7;51H[?12l[?25h[?25l[7;50H[K[32;81H6[7;50H[?12l[?25h[?25ln[32;81H7[7;51H[?12l[?25h[?25ld[32;81H8[7;52H[?12l[?25h[?25ll[32;81H9[7;53H[?12l[?25h[?25l;[32;80H50[7;54H[?12l[?25h[32;1H[K[7;53H[?25l[32;68H^[[7;53H[?12l[?25h[?25l[32;68H  [7;54H[32;78H7,49[10CAll[7;53H[?12l[?25h[?25l[32;68H:[7;53H[32;68H[K[32;1H:[?12l[?25hw[?25l[?12l[?25hq[?25l[?12l[?25h[?25l[?1006l[?1002l"fileremove.cpp" 9L, 122C written
+[?1l>[?12l[?25h[?1049lhenry@henry-HP-ENVY-dv7-Notebook-PC$ g++ fileremove.cpp
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls
+a.out  fileremove.cpp  Makefile   remove    src    testscript.sh
+bin    LICENSE	       README.md  removeMe  tests
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ./a.out
+file to be removed was ran
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing a single & and | do not work because we dont have piping or giving terminal back
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls & pwd
+ls: cannot access &: No such file or directory
+ls: cannot access pwd: No such file or directory
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls  pwd | ls
+pwd: ignoring non-option arguments
+/home/henry/cs100/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing commands execute before exiting                               git works on rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ git status
+On branch exec
+Your branch is up-to-date with 'origin/exec'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	[31mmodified:   README.md[m
+	[31mmodified:   tests/exec.script[m
+	[31mmodified:   testscript.sh[m
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	[31mbin/[m
+	[31mfileremove.cpp[m
+	[31mremove/[m
+	[31mremoveMe/[m
+	[31mtests/test.sh[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #showing executing command without       before exiting
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ls && pwd && echo removing a file;    && rm -rf remove/ && exit
+a.out  fileremove.cpp  Makefile   remove    src    testscript.sh
+bin    LICENSE	       README.md  removeMe  tests
+/home/henry/cs100/rshell
+removing a file
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ ls
+[0m[01;32ma.out[0m  [01;34mbin[0m  fileremove.cpp  LICENSE  Makefile  README.md  [01;34mremoveMe[0m  [01;34msrc[0m  [01;34mtests[0m  [01;32mtestscript.sh[0m
 ]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ exit
+
+#In order to see a test case of thousands of flags or commands view the testscript in tests/ folder
+#not all bugs are listed in this execution script and are located in the Bug section of the README file
+
 exit
 
-Script done on Tue 21 Oct 2014 04:00:03 PM PDT
+Script done on Tue 21 Oct 2014 08:16:14 PM PDT

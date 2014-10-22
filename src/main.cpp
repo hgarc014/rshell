@@ -41,6 +41,7 @@ int main(){
         user = pass->pw_name;
         all = user + "@" + machine + "$ ";
     }else{
+        perror("hostName or MachineName");
         cout << LINE << endl
             << "Couldn't find userLogin or HostMachine displaying $ instead" << endl;
         all = "$ ";
