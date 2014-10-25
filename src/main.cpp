@@ -26,7 +26,7 @@ const char ANDS[] = "&&";
 const char ORS[] = "||";
 const char EXIT[] = "exit";
 const int SZ = 50;
-const string LINE('-',40);
+const string LINE(40, '-');
 
 int main(){
 
