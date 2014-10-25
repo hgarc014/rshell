@@ -1,6 +1,6 @@
 #rshell
 
-Runs commands with execvp in order to produce a terminal experience.
+Runs commands with execvp in order to produce a terminal experience. allows use with commands that are found with the execvp function.
 
 
 ##License information in LICENSE file
@@ -49,12 +49,4 @@ command and then look for a new line of commands
   * `google-chrome &`
 8. cannot run a command in quotes
   * `"ls"`
-9.
-
-
-#------------REMOVE BELOW----------------
-
-git tag --a NAME -m "MESSAGE"
-git tag
-git push --tags
 
