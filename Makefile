@@ -10,6 +10,7 @@ rshell: src/main.cpp
 	mkdir bin; \
 	fi
 	$(CMP) $(FLG) src/main.cpp -o bin/rshell
+	$(COMP) $(FLG) src/ls.cpp -o bin/ls
 
 
 clean:

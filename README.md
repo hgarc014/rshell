@@ -4,12 +4,13 @@ Runs commands with execvp in order to produce a terminal experience. allows use 
 
 
 ##License information in LICENSE file
-
+https://github.com/hgarc014/rshell/blob/master/LICENSE
 
 
 ##File List
 
 * main.cpp
+* ls.cpp
 
 
 
