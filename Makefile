@@ -4,16 +4,19 @@ FLG=-Wall -Werror -ansi -pedantic
 CMP=g++
 
 
-rshell: src/main.cpp
+rshell: makebin src/main.cpp
+	$(CMP) $(FLG) src/main.cpp -o bin/rshell
+	$(CMP) $(FLG) src/ls.cpp -o bin/ls
+
+makebin:
 	@if [ ! -d bin/ ];\
 	then \
 	mkdir bin; \
 	fi
-	$(CMP) $(FLG) src/main.cpp -o bin/rshell
-	$(COMP) $(FLG) src/ls.cpp -o bin/ls
-
 
 clean:
-	rm bin/*.o bin/rshell.out
+	rm -rf bin/*
+
+#bin/*.o bin/rshell bin/ls
 
 
