@@ -8,6 +8,7 @@
 #include <grp.h>
 #include <errno.h>
 #include <stdio.h>
+#include <algorithm>
 
 #include <iostream>
 #include <string>
@@ -27,6 +28,7 @@ using namespace std;
 
 void lsL(const string & file);
 void checkinput(const int, const string &s);
+bool noCaseComp(const string &one, const string &two);
 
 int main(int argc, char*argv[]){
 
@@ -48,9 +50,14 @@ int main(int argc, char*argv[]){
             input.push_back(argv[i]);
         }
     }
+
+    sort(input.begin(), input.end(), noCaseComp);
+
+    cout << "---------outputing sorted--------" << endl;
     for(unsigned i = 0; i < input.size(); ++i){
-//        cout << input.at(i) << endl;
+    cout << input.at(i) << endl;
     }
+    cout << "-------done outputing sorted-------" << endl;
 
     string s = ".";
     checkinput(flags,s);
@@ -136,16 +143,22 @@ void checkinput(const int flags, const string &s){
         exit(1);
     }
     dirent *direntp;
-    while ((direntp = readdir(dirp))){
-        if(direntp == NULL){
-            perror("readdir");
-            exit(1);
-        }
+    vector<string> file;
+while((direntp = readdir(dirp))){
+    if(direntp == NULL){
+        perror("readdir");
+        exit(1);
+    }
+    file.push_back(direntp->d_name);
+}
+sort(file.begin(),file.end(),noCaseComp);
+
+for(unsigned i=0; i < file.size(); ++i){
         if(checkL(flags) && checkA(flags) && checkR(flags)){
             cout << "all flags were passed in" << endl;
         }
         else if (checkL(flags) && checkA(flags)){
-            lsL(direntp->d_name);
+            lsL(file.at(i));
         }
         else if (checkL(flags) && checkR(flags)){
             cout << "L and R" << endl;
@@ -154,21 +167,31 @@ void checkinput(const int flags, const string &s){
             cout << "A and R" << endl;
         }
         else if(checkL(flags)){
-            if(direntp->d_name[0] != '.')
-                lsL(direntp->d_name);
+            if(file.at(i).at(0) != '.')
+                lsL(file.at(i));
         }
         else if (checkA(flags)){
-            cout << direntp->d_name << " ";
+            cout << file.at(i) << " ";
         }
         else if (checkR(flags)){
             cout << "haven't done recursion yet" << endl;
         }
         else{
-            if(direntp->d_name[0] != '.'){
-                cout << direntp->d_name << " ";
+            if(file.at(i).at(0) != '.'){
+                cout << file.at(i) << " ";
             }
         }
-
-    }
+}
     closedir(dirp);
+}
+
+bool noCaseComp(const string &one, const string &two){
+    //change sort to ignore first char if file is dot.
+    for(unsigned i=0; (i < one.size()) && (i<two.size());++i){
+        if(tolower(one.at(i)) < tolower(two.at(i)))
+            return true;
+        else if (tolower(one.at(i))>tolower(two.at(i)))
+            return false;
+    }
+    return (one.size() < two.size());
 }
