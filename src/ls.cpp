@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -25,10 +26,12 @@ using namespace std;
 
 
 void lsL(const string & file);
+void checkinput(const int, const string &s);
 
 int main(int argc, char*argv[]){
 
     int flags = 0;
+    vector<string> input;
 
     for(int i =1; i < argc; ++i){
         if(argv[i][0] == '-'){
@@ -41,52 +44,17 @@ int main(int argc, char*argv[]){
                     flags |= FLAG_R;
             }
         }
+        else{
+            input.push_back(argv[i]);
+        }
+    }
+    for(unsigned i = 0; i < input.size(); ++i){
+//        cout << input.at(i) << endl;
     }
 
     string s = ".";
-    DIR *dirp = opendir(s.c_str());
-    if(dirp == NULL){
-        perror("opendir");
-        exit(1);
-    }
-    dirent *direntp;
-    while ((direntp = readdir(dirp))){
-        if(direntp == NULL){
-            perror("readdir");
-            exit(1);
-        }
-        if(checkL(flags) && checkA(flags) && checkR(flags)){
-            cout << "all flags were passed in" << endl;
-        }
-        else if (checkL(flags) && checkA(flags)){
-            cout << "A and L" << endl;
-        }
-        else if (checkL(flags) && checkR(flags)){
-            cout << "L and R" << endl;
-        }
-        else if (checkA(flags) && checkR(flags)){
-            cout << "A and R" << endl;
-        }
-        else if(checkL(flags)){
-            if(direntp->d_name[0] != '.')
-                lsL(direntp->d_name);
-        }
-        else if (checkA(flags)){
-            cout << direntp->d_name << " ";
-        }
-        else if (checkR(flags)){
-            cout << "haven't done recursion yet" << endl;
-        }
-        else{
-            if(direntp->d_name[0] != '.'){
-                cout << direntp->d_name << " ";
-            }
-        }
-
-    }
-    closedir(dirp);
+    checkinput(flags,s);
     cout << endl;
-
     return 0;
 }
 
@@ -130,7 +98,7 @@ void lsL(const string & file){
         cout << "x";
     eldash;
     string time = ctime(&statbuf.st_ctime);
-    time = " " + time.substr(0, time.size()-9) + " ";
+    time = time.substr(3, time.size()-9) + " ";
     struct passwd *usr = getpwuid(statbuf.st_uid);
     struct group *gp = getgrgid(statbuf.st_gid);
     if(gp == NULL){
@@ -157,10 +125,50 @@ void lsL(const string & file){
     cout << endl;
 }
 
-void lsA(){
+void lsR(){
 
 }
 
-void lsR(){
+void checkinput(const int flags, const string &s){
+    DIR *dirp = opendir(s.c_str());
+    if(dirp == NULL){
+        perror("opendir");
+        exit(1);
+    }
+    dirent *direntp;
+    while ((direntp = readdir(dirp))){
+        if(direntp == NULL){
+            perror("readdir");
+            exit(1);
+        }
+        if(checkL(flags) && checkA(flags) && checkR(flags)){
+            cout << "all flags were passed in" << endl;
+        }
+        else if (checkL(flags) && checkA(flags)){
+            lsL(direntp->d_name);
+        }
+        else if (checkL(flags) && checkR(flags)){
+            cout << "L and R" << endl;
+        }
+        else if (checkA(flags) && checkR(flags)){
+            cout << "A and R" << endl;
+        }
+        else if(checkL(flags)){
+            if(direntp->d_name[0] != '.')
+                lsL(direntp->d_name);
+        }
+        else if (checkA(flags)){
+            cout << direntp->d_name << " ";
+        }
+        else if (checkR(flags)){
+            cout << "haven't done recursion yet" << endl;
+        }
+        else{
+            if(direntp->d_name[0] != '.'){
+                cout << direntp->d_name << " ";
+            }
+        }
 
+    }
+    closedir(dirp);
 }
