@@ -19,6 +19,9 @@ using namespace std;
 #define FLAG_R 4
 
 #define eldash else cout << "-"
+#define checkA(x) (x & FLAG_a)
+#define checkL(x) (x & FLAG_l)
+#define checkR(x) (x & FLAG_R)
 
 
 void lsL(const string & file);
@@ -52,9 +55,33 @@ int main(int argc, char*argv[]){
             perror("readdir");
             exit(1);
         }
-        cout << direntp->d_name << endl;
-        if(direntp->d_name[0] != '.')
-            lsL(direntp->d_name);
+        if(checkL(flags) && checkA(flags) && checkR(flags)){
+            cout << "all flags were passed in" << endl;
+        }
+        else if (checkL(flags) && checkA(flags)){
+            cout << "A and L" << endl;
+        }
+        else if (checkL(flags) && checkR(flags)){
+            cout << "L and R" << endl;
+        }
+        else if (checkA(flags) && checkR(flags)){
+            cout << "A and R" << endl;
+        }
+        else if(checkL(flags)){
+            if(direntp->d_name[0] != '.')
+                lsL(direntp->d_name);
+        }
+        else if (checkA(flags)){
+            cout << direntp->d_name << " ";
+        }
+        else if (checkR(flags)){
+            cout << "haven't done recursion yet" << endl;
+        }
+        else{
+            if(direntp->d_name[0] != '.'){
+                cout << direntp->d_name << " ";
+            }
+        }
 
     }
     closedir(dirp);
@@ -66,7 +93,7 @@ int main(int argc, char*argv[]){
 void lsL(const string & file){
 
     struct stat statbuf;
-    cout << "executing=" << file << "|" << endl;
+    //    cout << "executing=" << file << "|" << endl;
     if(stat(file.c_str(), &statbuf) == -1){
         perror("stat");
         exit(1);
@@ -114,7 +141,7 @@ void lsL(const string & file){
         perror("getUSR");
         exit(1);
     }
-    cout << " " << usr->pw_name << " " << gp->gr_name << " "<< statbuf.st_size << time << file << endl;
+    cout << " " << usr->pw_name << " " << gp->gr_name << " "<< statbuf.st_size << time << file;
 
     //    cout << endl << "IDfile=" << statbuf.st_dev << endl
     //        << "inode=" << statbuf.st_ino << endl
