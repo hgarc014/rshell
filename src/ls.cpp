@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -28,7 +29,7 @@ using namespace std;
 
 void lsL(const string & file);
 void checkinput(const int, const string &s);
-bool noCaseComp(const string &one, const string &two);
+bool noCaseComp(string one, string two);
 
 int main(int argc, char*argv[]){
 
@@ -171,22 +172,27 @@ for(unsigned i=0; i < file.size(); ++i){
                 lsL(file.at(i));
         }
         else if (checkA(flags)){
-            cout << file.at(i) << " ";
+            cout << left << setw(5) <<file.at(i) << " ";
         }
         else if (checkR(flags)){
             cout << "haven't done recursion yet" << endl;
         }
         else{
             if(file.at(i).at(0) != '.'){
-                cout << file.at(i) << " ";
+                cout << left << setw(5) <<file.at(i) << " ";
             }
         }
 }
     closedir(dirp);
 }
 
-bool noCaseComp(const string &one, const string &two){
+bool noCaseComp(string one, string two){
     //change sort to ignore first char if file is dot.
+    if(one.size() > 1 && one.at(0) == '.')
+        one = one.substr(1);
+    if(two.size() > 1 && two.at(0) == '.')
+        two = two.substr(1);
+
     for(unsigned i=0; (i < one.size()) && (i<two.size());++i){
         if(tolower(one.at(i)) < tolower(two.at(i)))
             return true;
