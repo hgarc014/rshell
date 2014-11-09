@@ -27,11 +27,15 @@ using namespace std;
 #define checkL(x) (x & FLAG_l)
 #define checkR(x) (x & FLAG_R)
 
+const int MAX_LNK = 3;
+const int MAX_USR = 10;
+const int MAX_SZ = 10;
 
-void lsL(const string & file);
+
+void lsL(const string path, const string &name);
 void checkinput(const int, const string &s);
 bool noCaseComp(const string &one, const string &two);
-void lsR(vector<string> &file, string path, bool isA);
+void lsR(vector<string> &file, string path, bool isA, bool isL);
 
 int main(int argc, char*argv[])
 {
@@ -58,19 +62,35 @@ int main(int argc, char*argv[])
         }
     }
 
-    sort(input.begin(), input.end(), noCaseComp);
-
     string s = ".";
-    checkinput(flags,s);
-    cout << endl;
+    if(input.size() > 0){
+        sort(input.begin(), input.end(), noCaseComp);
+        for(unsigned i=0; i < input.size(); ++i)
+        {
+            s = input.at(i);
+            if(input.size() > 1 && !(checkR(flags)))
+                cout << s << ":" << endl;
+            checkinput(flags,s);
+            cout << endl;
+        }
+    }
+    else
+    {
+        checkinput(flags,s);
+        cout << endl;
+    }
     return 0;
 }
 
-void lsL(const string & file)
+
+
+
+////////////////////////////////////////////////////////////////
+void lsL(const string path, const string &name)
 {
 
     struct stat statbuf;
-    if(stat(file.c_str(), &statbuf) == -1){
+    if(stat(path.c_str(), &statbuf) == -1){
         perror("stat");
         exit(1);
     }
@@ -128,27 +148,37 @@ void lsL(const string & file)
         perror("getUSR");
         exit(1);
     }
-    cout << " " << left << statbuf.st_nlink << ' ' << setw(strlen(usr->pw_name)+1) << usr->pw_name
-        << setw(strlen(gp->gr_name)+1)  << gp->gr_name << setw(5)
-        << statbuf.st_size << setw(5) << time << setw(5) << file;
+    cout << " " << left << setw(MAX_LNK) << statbuf.st_nlink << ' ' << setw(MAX_USR) 
+        << usr->pw_name << setw(MAX_USR)  << gp->gr_name << setw(MAX_SZ)
+        << statbuf.st_size << setw(MAX_USR + 5) << time << /*setw(5) <<*/ name;
 
     cout << endl;
 }
 
-void lsR(vector<string> &file, string path, bool isA)
+////////////////////////////////////////////////////////////////
+void lsR(vector<string> &file, string path, bool isA, bool isL)
 {
     cout << endl << path << ":" << endl;
     vector<string > dirs;
     for(unsigned i=0; i < file.size(); ++i)
     {
         struct stat statbuf;
-        if(file.at(i).at(0) != '.')
-            cout << file.at(i) << ' ';
-        else if(isA)
-            cout << file.at(i) << ' ';
-
+        if(isL)
+        {
+            string temp = path + "/" + file.at(i);
+            if(file.at(i).at(0) != '.')
+                lsL(temp,file.at(i));
+            else if (isA)
+                lsL(temp,file.at(i));
+        }
+        else{
+            if(file.at(i).at(0) != '.')
+                cout << file.at(i) << ' ';
+            else if(isA)
+                cout << file.at(i) << ' ';
+        }
         string temp = path + "/" + file.at(i);
-//        cout << endl << "tpath=" << temp << endl;
+        //        cout << endl << "tpath=" << temp << endl;
         if(stat(/*file.at(i).*/temp.c_str(), &statbuf) == -1){
             perror("stat");
             exit(1);
@@ -171,7 +201,7 @@ void lsR(vector<string> &file, string path, bool isA)
         file.clear();
         if(dirs.at(i) == "..")
             continue;
-//        cout << endl << "DIR=" << dirs.at(i) << endl;
+        //        cout << endl << "DIR=" << dirs.at(i) << endl;
         string temp = path + "/" + dirs.at(i);
         DIR *dirp = opendir(temp.c_str() /*dirs.at(i).c_str()*/);
         dirent *direntp;
@@ -188,14 +218,15 @@ void lsR(vector<string> &file, string path, bool isA)
                 exit(1);
             }
             string s = direntp->d_name;
-                file.push_back(s);
+            file.push_back(s);
         }
         sort(file.begin(),file.end(),noCaseComp);
         cout << endl;
-        lsR(file, path + "/" + dirs.at(i), isA);
+        lsR(file, path + "/" + dirs.at(i), isA, isL);
     }
 }
 
+////////////////////////////////////////////////////////////////
 void checkinput(const int flags, const string &s)
 {
     DIR *dirp = opendir(s.c_str());
@@ -216,28 +247,29 @@ void checkinput(const int flags, const string &s)
 
     for(unsigned i=0; i < file.size(); ++i){
         if(checkL(flags) && checkA(flags) && checkR(flags)){
-            cout << "all flags were passed in" << endl;
+            lsR(file, s, true, true);
+            break;
         }
         else if (checkL(flags) && checkA(flags)){
-            lsL(file.at(i));
+            lsL(s + "/" + file.at(i),file.at(i));
         }
         else if (checkL(flags) && checkR(flags)){
-            cout << "L and R" << endl;
+            lsR(file, s, false, true);
+            break;
         }
         else if (checkA(flags) && checkR(flags)){
-            lsR(file, ".", true);
+            lsR(file, s, true, false);
             break;
         }
         else if(checkL(flags)){
             if(file.at(i).at(0) != '.')
-                lsL(file.at(i));
+                lsL(s + "/" + file.at(i),file.at(i));
         }
         else if (checkA(flags)){
             cout << /*left << setw(5) <<*/ file.at(i) << " ";
         }
         else if (checkR(flags)){
-            //            cout << "haven't done recursion yet" << endl;
-            lsR(file, ".", false);
+            lsR(file, s, false, false);
             break;
         }
         else{
@@ -246,9 +278,11 @@ void checkinput(const int flags, const string &s)
             }
         }
     }
+    cout << endl;
     closedir(dirp);
 }
 
+////////////////////////////////////////////////////////////////
 bool noCaseComp(const string &one, const string &two)
 {
     unsigned i = 0,
