@@ -26,22 +26,28 @@ using namespace std;
 #define checkA(x) (x & FLAG_a)
 #define checkL(x) (x & FLAG_l)
 #define checkR(x) (x & FLAG_R)
+#define BLUE printf("\x1b[94m");
+#define GREEN printf("\x1b[92m");
+#define GRAY printf("\x1b[100m");
+#define ENDC printf("\x1b[0m");
 
-const int MAX_LNK = 3;
-const int MAX_USR = 10;
-const int MAX_SZ = 10;
+const int MAX_LNK = 4;
+const int MAX_USR = 12;
+const int MAX_SZ = 9;
+const int MAX_TIM = 15;
 
 
 void lsL(const string path, const string &name);
 void checkinput(const int, const string &s);
-bool noCaseComp(const string &one, const string &two);
 void lsR(vector<string> &file, string path, bool isA, bool isL);
+void printtotal(const vector<string> &file, string path, bool isA);
+bool noCaseComp(const string &one, const string &two);
 
 int main(int argc, char*argv[])
 {
     int flags = 0;
     vector<string> input;
-
+ 
     for(int i =1; i < argc; ++i)
     {
         if(argv[i][0] == '-')
@@ -64,11 +70,51 @@ int main(int argc, char*argv[])
 
     string s = ".";
     if(input.size() > 0){
-        sort(input.begin(), input.end(), noCaseComp);
+        vector<string> dirs;
+        vector<string> files;
+        sort(input.begin(),input.end(),noCaseComp);
+        unsigned max =1,
+                 col = 80,
+                 old;
         for(unsigned i=0; i < input.size(); ++i)
         {
-            s = input.at(i);
-            if(input.size() > 1 && !(checkR(flags)))
+            struct stat statbuf;
+            if(lstat(input.at(i).c_str(), &statbuf) == -1){
+                perror("lstat");
+                exit(1);
+            }
+            if(S_ISREG(statbuf.st_mode))
+            {
+                files.push_back(input.at(i));
+                if(input.at(i).size() > max)
+                    max = input.at(i).size();
+            }
+
+            if(S_ISDIR(statbuf.st_mode))
+                dirs.push_back(input.at(i));
+        }
+        sort(files.begin(),files.end(),noCaseComp);
+        max += 2;
+        col /= max;
+        old = col;
+        for(unsigned i = 0; i < files.size(); ++i)
+        {
+            cout << left << setw(max) << files.at(i);
+            --col;
+            if(col <= 0)
+            {
+                cout << endl;
+                col = old;
+            }
+            if(i+1 == files.size())
+                cout << endl << endl;
+        }
+
+        sort(dirs.begin(),dirs.end(),noCaseComp);
+        for(unsigned i=0; i < dirs.size(); ++i)
+        {
+            s = dirs.at(i);
+            if((dirs.size() > 1 && !(checkR(flags))) || files.size() > 0)
                 cout << s << ":" << endl;
             checkinput(flags,s);
             cout << endl;
@@ -90,15 +136,20 @@ void lsL(const string path, const string &name)
 {
 
     struct stat statbuf;
-    if(stat(path.c_str(), &statbuf) == -1){
-        perror("stat");
+    if(lstat(path.c_str(), &statbuf) == -1){
+        perror("lstat");
         exit(1);
     }
+    bool canX = false,
+         isDir = false;
 
-    //cout << "total: " << statbuf.st_blksize;
-
-    if(S_ISDIR(statbuf.st_mode))
+    if(S_ISREG(statbuf.st_mode))
+        cout << "-";
+    else if(S_ISDIR(statbuf.st_mode))
+    {
+        isDir=true;
         cout << "d";
+    }
     else if(S_ISCHR(statbuf.st_mode))
         cout << "c";
     else if(S_ISBLK(statbuf.st_mode))
@@ -109,7 +160,9 @@ void lsL(const string path, const string &name)
         cout << "l";
     else if(S_ISSOCK(statbuf.st_mode))
         cout << "s";
-    eldash;
+    else
+        cout << "?";
+
     if(statbuf.st_mode & S_IRUSR)
         cout << "r";
     eldash;
@@ -117,7 +170,10 @@ void lsL(const string path, const string &name)
         cout << "w";
     eldash;
     if(statbuf.st_mode & S_IXUSR)
+    {
+        canX=true;
         cout << "x";
+    }
     eldash;
     if(statbuf.st_mode & S_IRGRP)
         cout << "r";
@@ -127,7 +183,8 @@ void lsL(const string path, const string &name)
     eldash;
     if(statbuf.st_mode & S_IXGRP)
         cout << "x";
-    eldash; if(statbuf.st_mode & S_IROTH)
+    eldash; 
+    if(statbuf.st_mode & S_IROTH)
         cout << "r";
     eldash;
     if(statbuf.st_mode & S_IWOTH)
@@ -136,7 +193,7 @@ void lsL(const string path, const string &name)
     if(statbuf.st_mode & S_IXOTH)
         cout << "x";
     eldash;
-    string time = ctime(&statbuf.st_ctime);
+    string time = ctime(&statbuf.st_mtime);
     time = time.substr(3, time.size()-12) + " ";
     struct passwd *usr = getpwuid(statbuf.st_uid);
     struct group *gp = getgrgid(statbuf.st_gid);
@@ -148,11 +205,40 @@ void lsL(const string path, const string &name)
         perror("getUSR");
         exit(1);
     }
-    cout << " " << left << setw(MAX_LNK) << statbuf.st_nlink << ' ' << setw(MAX_USR) 
+    cout << "  " << left << setw(MAX_LNK) << statbuf.st_nlink << ' ' << setw(MAX_USR) 
         << usr->pw_name << setw(MAX_USR)  << gp->gr_name << setw(MAX_SZ)
-        << statbuf.st_size << setw(MAX_USR + 5) << time << /*setw(5) <<*/ name;
+        << statbuf.st_size << setw(MAX_TIM) << time;
+    if(canX)
+        GREEN;
+    if(isDir)
+        BLUE;
+    if(name.at(0) == '.')
+        GRAY;
+    cout << /*setw(5) <<*/ name;
+    ENDC;
 
     cout << endl;
+}
+
+////////////////////////////////////////////////////////////////
+void printtotal(const vector<string> &file, string path, bool isA)
+{
+    long tot = 0;
+    for(unsigned i=0; i <file.size(); ++i)
+    {
+        struct stat statbuf;
+        string temp = path + "/" + file.at(i);
+        if(lstat(temp.c_str(), &statbuf) == -1){
+            perror("lstat");
+            exit(1);
+        }
+        if(file.at(i).at(0) != '.')
+            tot += statbuf.st_blocks/2;
+        else if(isA)
+            tot += statbuf.st_blocks/2;
+        //have to change
+    }
+    cout << "total " << tot << endl;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -160,6 +246,22 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
 {
     cout << endl << path << ":" << endl;
     vector<string > dirs;
+    unsigned max = 1,
+             col = 80;
+    if(isL)
+        printtotal(file,path,isA);
+    else
+    {
+        for(unsigned i =0; i < file.size(); ++i)
+        {
+            if(max < file.at(i).size())
+                max = file.at(i).size();
+        }
+        max += 2;
+        col /= max;
+    }
+    int old = col;
+
     for(unsigned i=0; i < file.size(); ++i)
     {
         struct stat statbuf;
@@ -172,15 +274,29 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
                 lsL(temp,file.at(i));
         }
         else{
+            if(statbuf.st_mode & S_IXUSR)
+                GREEN;
+            if(S_ISDIR(statbuf.st_mode))
+                BLUE;
+            if(file.at(i).at(0) == '.')
+                GRAY;
+
             if(file.at(i).at(0) != '.')
-                cout << file.at(i) << ' ';
+                cout << left << setw(max) << file.at(i);
             else if(isA)
-                cout << file.at(i) << ' ';
+                cout << left << setw(max) << file.at(i);
+            ENDC;
+            --col;
+            if(col <= 0)
+            {
+                cout << endl;
+                col = old;
+            }
         }
         string temp = path + "/" + file.at(i);
         //        cout << endl << "tpath=" << temp << endl;
-        if(stat(/*file.at(i).*/temp.c_str(), &statbuf) == -1){
-            perror("stat");
+        if(lstat(/*file.at(i).*/temp.c_str(), &statbuf) == -1){
+            perror("lstat");
             exit(1);
         }
         if(S_ISDIR(statbuf.st_mode))
@@ -244,13 +360,41 @@ void checkinput(const int flags, const string &s)
         file.push_back(direntp->d_name);
     }
     sort(file.begin(),file.end(),noCaseComp);
+    bool one = true;
+    unsigned max = 1,
+             col = 80,
+             old;
+
+    if(!checkL(flags))
+    {
+        for(unsigned i =0; i < file.size(); ++i)
+        {
+            if(max < file.at(i).size())
+                max = file.at(i).size();
+        }
+        max += 2;
+        col /= max;
+        old = col;
+    }
 
     for(unsigned i=0; i < file.size(); ++i){
+        struct stat statbuf;
+        string temp = s + "/" +file.at(i);
+        if(lstat(temp.c_str(), &statbuf) == -1){
+            perror("lstat");
+            exit(1);
+        }
+
         if(checkL(flags) && checkA(flags) && checkR(flags)){
             lsR(file, s, true, true);
             break;
         }
         else if (checkL(flags) && checkA(flags)){
+            if(one)
+            {
+                one = false;
+                printtotal(file,s,true);
+            }
             lsL(s + "/" + file.at(i),file.at(i));
         }
         else if (checkL(flags) && checkR(flags)){
@@ -262,11 +406,29 @@ void checkinput(const int flags, const string &s)
             break;
         }
         else if(checkL(flags)){
+            if(one)
+            {
+                one = false;
+                printtotal(file,s,false);
+            }
             if(file.at(i).at(0) != '.')
                 lsL(s + "/" + file.at(i),file.at(i));
         }
         else if (checkA(flags)){
-            cout << /*left << setw(5) <<*/ file.at(i) << " ";
+            if(statbuf.st_mode & S_IXUSR)
+                GREEN;
+            if(S_ISDIR(statbuf.st_mode))
+                BLUE;
+            if(file.at(i).at(0) == '.')
+                GRAY;
+            cout << left << setw(max) << file.at(i);
+            ENDC;
+            --col;
+            if(col <= 0)
+            {
+                cout << endl;
+                col = old;
+            }
         }
         else if (checkR(flags)){
             lsR(file, s, false, false);
@@ -274,7 +436,18 @@ void checkinput(const int flags, const string &s)
         }
         else{
             if(file.at(i).at(0) != '.'){
-                cout << /*left << setw(5) << */file.at(i) << " ";
+                if(statbuf.st_mode & S_IXUSR)
+                    GREEN;
+                if(S_ISDIR(statbuf.st_mode))
+                    BLUE;
+                cout << left << setw(max) << file.at(i);
+                ENDC;
+                --col;
+                if(col <= 0)
+                {
+                    cout << endl;
+                    col = old;
+                }
             }
         }
     }
