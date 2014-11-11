@@ -53,7 +53,8 @@ int main(int argc, char*argv[])
     {
         if(argv[i][0] == '-')
         {
-            for(int j = 1; argv[i][j] != 0 && argv[i][j] != ' ';j++)
+            int j = 1;
+            for(; argv[i][j] != 0 && argv[i][j] != ' ';j++)
             {
                 if(argv[i][j] == 'a')
                     flags |= FLAG_a;
@@ -66,6 +67,11 @@ int main(int argc, char*argv[])
                     cout << "Invalid flag! -a -l -R only" << endl;
                     exit(1);
                 }
+            }
+            if(j == 1)
+            {
+                cout << "No option passed!" << endl;
+                exit(1);
             }
         }
         else
@@ -281,9 +287,14 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
     for(unsigned i=0; i < file.size(); ++i)
     {
         struct stat statbuf;
+        string temp = path + "/" + file.at(i);
+        if(lstat(temp.c_str(), &statbuf) == -1){
+            perror("lstat");
+            exit(1);
+        }
+
         if(isL)
         {
-            string temp = path + "/" + file.at(i);
             if(file.at(i).at(0) != '.')
                 lsL(temp,file.at(i));
             else if (isA)
@@ -309,11 +320,6 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
                 col = old;
             }
         }
-        string temp = path + "/" + file.at(i);
-        if(lstat(temp.c_str(), &statbuf) == -1){
-            perror("lstat");
-            exit(1);
-        }
         if(S_ISDIR(statbuf.st_mode))
         {
             if(file.at(i).at(0) != '.')
@@ -325,8 +331,6 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
         }
     }
     unsigned i =0;
-    //    if(isA)
-    //        i = 2;
     for(; i < dirs.size(); ++i)
     {
         file.clear();
@@ -351,7 +355,11 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
             string s = direntp->d_name;
             file.push_back(s);
         }
-        closedir(dirp);
+        if(closedir(dirp) == -1)
+        {
+            perror("closedir");
+            exit(1);
+        }
         sort(file.begin(),file.end(),noCaseComp);
         cout << endl;
         lsR(file, path + "/" + dirs.at(i), isA, isL);
@@ -375,7 +383,12 @@ void checkinput(const int flags, const string &s)
         }
         file.push_back(direntp->d_name);
     }
-    closedir(dirp);
+    if(closedir(dirp) == -1)
+    {
+        perror("closedir");
+        exit(1);
+    }
+
 
     sort(file.begin(),file.end(),noCaseComp);
     bool one = true;
