@@ -46,3 +46,7 @@ bin/
 *.exe
 *.out
 *.app
+
+# Remove Files
+*.rem
+

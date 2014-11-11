@@ -229,7 +229,7 @@ void lsL(const string path, const string &name)
         BLUE;
     if(name.at(0) == '.')
         GRAY;
-    cout << /*setw(5) <<*/ name;
+    cout << name;
     ENDC;
 
     cout << endl;
@@ -251,7 +251,6 @@ void printtotal(const vector<string> &file, string path, bool isA)
             tot += statbuf.st_blocks/2;
         else if(isA)
             tot += statbuf.st_blocks/2;
-        //have to change
     }
     cout << "total " << tot << endl;
 }
@@ -311,8 +310,7 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
             }
         }
         string temp = path + "/" + file.at(i);
-        //        cout << endl << "tpath=" << temp << endl;
-        if(lstat(/*file.at(i).*/temp.c_str(), &statbuf) == -1){
+        if(lstat(temp.c_str(), &statbuf) == -1){
             perror("lstat");
             exit(1);
         }
@@ -335,9 +333,8 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
 
         if(dirs.at(i) == ".." || dirs.at(i) == ".")
             continue;
-        //        cout << endl << "DIR=" << dirs.at(i) << endl;
         string temp = path + "/" + dirs.at(i);
-        DIR *dirp = opendir(temp.c_str() /*dirs.at(i).c_str()*/);
+        DIR *dirp = opendir(temp.c_str());
         dirent *direntp;
         if(dirp == NULL)
         {
