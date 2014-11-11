@@ -3,23 +3,25 @@
 Runs commands with execvp in order to produce a terminal experience. allows use with commands that are found with the execvp function.
 
 
-##License information in LICENSE file
+##License information 
+
+Copyright (c) 2014, Henry Garcia
+All rights reserved.
+
+All files are licensed under the BSD3.
+
 https://github.com/hgarc014/rshell/blob/master/LICENSE
 
 ##Run program/install
 
-once the directory has been copied install the program by going into the rshell directory
-
-`cd rshell`
-
-then install the files by executing
-
+1. open a terminal and clone the repository
+`git clone https://github.com/hgarc014/rshell.git`
+2. cd into the project
+`cd rshell/`
+3. create executables
 `make`
-
-then run the program by running
-
+4. execute rshell
 `bin/rshell`
-
 
 ##Bugs rshell
 
