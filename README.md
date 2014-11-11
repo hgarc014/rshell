@@ -6,14 +6,6 @@ Runs commands with execvp in order to produce a terminal experience. allows use 
 ##License information in LICENSE file
 https://github.com/hgarc014/rshell/blob/master/LICENSE
 
-
-##File List
-
-* main.cpp
-* ls.cpp
-
-
-
 ##Run program/install
 
 once the directory has been copied install the program by going into the rshell directory
@@ -29,7 +21,7 @@ then run the program by running
 `bin/rshell`
 
 
-##Bugs
+##Bugs rshell
 
 1. having different symbols in one line will cause an error in execvp
   * `ls && ls || ls ;exit`
@@ -50,4 +42,8 @@ command and then look for a new line of commands
   * `google-chrome &`
 8. cannot run a command in quotes
   * `"ls"`
+
+##Bugs ls
+
+1. hidden files are colored farther due to setw
 

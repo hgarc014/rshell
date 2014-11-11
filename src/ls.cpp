@@ -29,7 +29,7 @@ using namespace std;
 #define BLUE printf("\x1b[94m");
 #define GREEN printf("\x1b[92m");
 #define GRAY printf("\x1b[100m");
-#define ENDC printf("\x1b[0m" "\x1b[39m");
+#define ENDC printf("\x1b[0m");
 
 const int MAX_LNK = 4;
 const int MAX_USR = 12;
@@ -61,6 +61,11 @@ int main(int argc, char*argv[])
                     flags |= FLAG_l;
                 else if(argv[i][j] == 'R')
                     flags |= FLAG_R;
+                else
+                {
+                    cout << "Invalid flag! -a -l -R only" << endl;
+                    exit(1);
+                }
             }
         }
         else
@@ -100,7 +105,15 @@ int main(int argc, char*argv[])
         old = col;
         for(unsigned i = 0; i < files.size(); ++i)
         {
+            struct stat statbuf;
+            if(lstat(files.at(i).c_str(), &statbuf) == -1){
+                perror("lstat");
+                exit(1);
+            }
+            if(statbuf.st_mode & S_IXUSR)
+                GREEN;
             cout << left << setw(max) << files.at(i);
+            ENDC;
             --col;
             if(col <= 0)
             {
@@ -115,7 +128,8 @@ int main(int argc, char*argv[])
         for(unsigned i=0; i < dirs.size(); ++i)
         {
             s = dirs.at(i);
-            if((dirs.size() > 1 && !(checkR(flags))) || files.size() > 0)
+            if(checkR(flags));
+            else if(dirs.size() > 1 || files.size() > 0)
                 cout << s << ":" << endl;
             checkinput(flags,s);
             cout << endl;
@@ -255,7 +269,9 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
     {
         for(unsigned i =0; i < file.size(); ++i)
         {
-            if(max < file.at(i).size())
+            if(isA && max < file.at(i).size())
+                max = file.at(i).size();
+            else if (file.at(i).at(0) != '.' && max < file.at(i).size())
                 max = file.at(i).size();
         }
         max += 2;
@@ -311,8 +327,8 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
         }
     }
     unsigned i =0;
-//    if(isA)
-//        i = 2;
+    //    if(isA)
+    //        i = 2;
     for(; i < dirs.size(); ++i)
     {
         file.clear();
@@ -374,7 +390,9 @@ void checkinput(const int flags, const string &s)
     {
         for(unsigned i =0; i < file.size(); ++i)
         {
-            if(max < file.at(i).size())
+            if(checkA(flags) && max < file.at(i).size())
+                max = file.at(i).size();
+            else if(file.at(i).at(0) != '.' && max < file.at(i).size())
                 max = file.at(i).size();
         }
         max += 2;
