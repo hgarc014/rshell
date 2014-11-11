@@ -1,4 +1,4 @@
-all: rshell ls
+all: rshell ls cp
 
 FLG=-Wall -Werror -ansi -pedantic
 CMP=g++
@@ -16,9 +16,9 @@ makebin:
 	mkdir $(FLD); \
 	fi
 
+cp: makebin src/cp.cpp
+	$(CMP) $(FLG) src/cp.cpp -o bin/cp
+
 clean:
 	rm -rf $(FLD)
-
-#bin/*.o bin/rshell bin/ls
-
 
