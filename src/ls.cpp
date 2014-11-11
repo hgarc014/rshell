@@ -29,12 +29,13 @@ using namespace std;
 #define BLUE printf("\x1b[94m");
 #define GREEN printf("\x1b[92m");
 #define GRAY printf("\x1b[100m");
-#define ENDC printf("\x1b[0m");
+#define ENDC printf("\x1b[0m" "\x1b[39m");
 
 const int MAX_LNK = 4;
 const int MAX_USR = 12;
 const int MAX_SZ = 9;
 const int MAX_TIM = 15;
+const int TERM_SZ = 85;
 
 
 void lsL(const string path, const string &name);
@@ -74,7 +75,7 @@ int main(int argc, char*argv[])
         vector<string> files;
         sort(input.begin(),input.end(),noCaseComp);
         unsigned max =1,
-                 col = 80,
+                 col = TERM_SZ,
                  old;
         for(unsigned i=0; i < input.size(); ++i)
         {
@@ -247,7 +248,7 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
     cout << endl << path << ":" << endl;
     vector<string > dirs;
     unsigned max = 1,
-             col = 80;
+             col = TERM_SZ;
     if(isL)
         printtotal(file,path,isA);
     else
@@ -310,12 +311,13 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
         }
     }
     unsigned i =0;
-    if(isA)
-        i = 2;
+//    if(isA)
+//        i = 2;
     for(; i < dirs.size(); ++i)
     {
         file.clear();
-        if(dirs.at(i) == "..")
+
+        if(dirs.at(i) == ".." || dirs.at(i) == ".")
             continue;
         //        cout << endl << "DIR=" << dirs.at(i) << endl;
         string temp = path + "/" + dirs.at(i);
@@ -336,6 +338,7 @@ void lsR(vector<string> &file, string path, bool isA, bool isL)
             string s = direntp->d_name;
             file.push_back(s);
         }
+        closedir(dirp);
         sort(file.begin(),file.end(),noCaseComp);
         cout << endl;
         lsR(file, path + "/" + dirs.at(i), isA, isL);
@@ -359,10 +362,12 @@ void checkinput(const int flags, const string &s)
         }
         file.push_back(direntp->d_name);
     }
+    closedir(dirp);
+
     sort(file.begin(),file.end(),noCaseComp);
     bool one = true;
     unsigned max = 1,
-             col = 80,
+             col = TERM_SZ,
              old;
 
     if(!checkL(flags))
@@ -452,7 +457,6 @@ void checkinput(const int flags, const string &s)
         }
     }
     cout << endl;
-    closedir(dirp);
 }
 
 ////////////////////////////////////////////////////////////////
