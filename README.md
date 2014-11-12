@@ -45,7 +45,11 @@ command and then look for a new line of commands
 8. cannot run a command in quotes
   * `"ls"`
 
-##Bugs ls
+##Bugs/Limitations ls
 
 1. hidden files are colored farther due to setw
+2. assumes a set terminal width (can be changed in source code)
+3. There are extra newlines after ls output depending on type of flag/file parameters
+4. files are sorted very similarly to ls, however shorter files are placed first on my version unlike ls. (ex re.file and readme.file)
+5. files are also outputted alphabetically left to right unlike ls, which outputs alphabetically in columns (top down).
 
