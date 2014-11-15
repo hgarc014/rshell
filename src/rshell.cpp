@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <pwd.h>
+#include <fcntl.h>
 
 #include <boost/tokenizer.hpp>
 
@@ -20,6 +21,9 @@ using namespace boost;
 
 void executeCommand(const string &input, const char cmd[]);
 void createCommand(const string &input,const char cmd[]);
+void input(const string &input, bool is3);
+void output(const string &input, bool isAp);
+void piping(const string &input);
 
 const char SEMIS[] =";";
 const char ANDS[] = "&&";
@@ -36,16 +40,17 @@ int main(){
            input;
 
     struct passwd *pass = getpwuid(getuid());
+    int host = gethostname(machine,SZ);
 
-    if(pass != NULL && gethostname(machine,SZ) != -1){
+    if(pass != NULL && host != -1){
         user = pass->pw_name;
         all = user + "@" + machine + "$ ";
     }else{
         if(pass == NULL)
             perror("hostName");
-        else
+        if(host == -1)
             perror("MachineName");
-        cout << LINE << endl
+        cout << endl << LINE << endl
             << "Couldn't find userLogin or HostMachine displaying $ instead" << endl;
         all = "$ ";
     }
@@ -75,6 +80,7 @@ int main(){
         else if (input.find(">") != string::npos)
         {
             cout << "found > only" << endl;
+            output(input,false);
         }
         else{
             createCommand(input, SEMIS);
@@ -138,5 +144,35 @@ void executeCommand(const string &input,const char cmd[]){
     }
     for(it = tok.begin(); it != tok.end(); ++it)
         delete [] argv[i];
+}
+
+void input(const string &input, bool is3)
+{
+
+}
+
+void output(const string &input, bool isAp)
+{
+    int redirect = 1;
+    if(input.find("2>") != string::npos)
+        redirect = 2;
+    int fd = open("testfile",O_RDWR|O_CREAT);
+    int oldstd = dup(redirect);
+    close(redirect);
+    dup(fd);
+    cout << "i just wrote to the file " << endl;
+    char *argv[10];
+        strcpy(argv[0],"ls");
+    argv[1]=NULL;
+    execvp(argv[0],argv);
+    close(redirect);
+    dup(oldstd);
+    cout << "made it back, but I shouldn't have" << endl;
+    exit(1);
+}
+
+void piping(const string &input)
+{
+
 }
 
