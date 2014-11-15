@@ -41,7 +41,10 @@ int main(){
         user = pass->pw_name;
         all = user + "@" + machine + "$ ";
     }else{
-        perror("hostName or MachineName");
+        if(pass == NULL)
+            perror("hostName");
+        else
+            perror("MachineName");
         cout << LINE << endl
             << "Couldn't find userLogin or HostMachine displaying $ instead" << endl;
         all = "$ ";
@@ -56,7 +59,24 @@ int main(){
             createCommand(input, ANDS);
         }else if(input.find("||") != string::npos){
             createCommand(input, ORS);
-        }else{
+        }
+        else if(input.find("|") != string::npos)
+        {
+            cout << "Do something for piping" << endl;
+        }
+        else if (input.find("<") != string::npos)
+        {
+            cout << "found < only" << endl;
+        }
+        else if (input.find(">>") != string::npos)
+        {
+            cout << "found >> only" << endl;
+        }
+        else if (input.find(">") != string::npos)
+        {
+            cout << "found > only" << endl;
+        }
+        else{
             createCommand(input, SEMIS);
         }
         cout << all;
@@ -112,7 +132,11 @@ void executeCommand(const string &input,const char cmd[]){
     argv[i] = 0;
     if(execvp(argv[0],argv) == -1){
         perror(argv[0]);
+        for(it = tok.begin(); it != tok.end(); ++it)
+            delete [] argv[i];
         exit(1);
     }
+    for(it = tok.begin(); it != tok.end(); ++it)
+        delete [] argv[i];
 }
 
