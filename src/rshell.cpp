@@ -151,26 +151,89 @@ void executeCommand(const string &input,const char cmd[]){
 
 void inputc(const string &input, bool is3)
 {
+//    int fd = open("r.rem",O_RDONLY);
+//    close(0);
+//    dup(fd);
+//        char *test[SZ];
+//        test[0] = new char[40];
+//        strcpy(test[0],"wc");
+//        test[1] = NULL;
+//        execvp(test[0],test);
+//        perror("execvp");
+//        exit(1);
+//
+//        close(fd);
+    string v = "<";
     if(is3)
-        ;
+    {
+        v = "<<<";
+        cout << "only take input from string";
+    }
     char *argv[SZ];
-    int fd = open("file",O_RDONLY);
-    //int oldstd = dup(0);
-    if(close(0) == -1)
+    string l = input.substr(0,input.find(v));
+    string r = input.substr(input.find(v) + v.size());
+    SEP sep(" ");
+    TOKEN tok(l,sep);
+    TOKEN tok2(r,sep);
+    TOKEN::iterator it=tok.begin();
+    TOKEN::iterator it2 = tok2.begin();
+    int pid = fork();
+    if(pid == -1)
     {
-        perror("close");
+        perror("fork");
+    }
+    else if (pid == 0)
+    {
+        if(it2 == tok2.end())
+        {
+            cout << "ERROR NO FILE" << endl;
+            exit(1);
+        }
+        int i = 0;
+        for(;it != tok.end();++it,++i)
+        {
+            argv[i] = new char[(*it).size()];
+            strcpy(argv[i],(*it).c_str());
+            cout << i << "=" << argv[i] << endl;
+        }
+        argv[i] = NULL;
+        if(r.find(">") != string::npos)
+        {
+            cout << "should close std out and replace by file" << endl;
+            exit(1);
+        }
+
+        int fd = open((*it2).c_str(),O_RDONLY);
+        if(fd == -1)
+        {
+            perror("open");
+            exit(1);
+        }
+        //int oldstd = dup(0);
+        if(close(0) == -1)
+        {
+            perror("close");
+            exit(1);
+        }
+        if(dup(fd)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
+        cout << "bout to execute" << endl;
+//        char *test[SZ];
+//        test[0] = new char[40];
+//        strcpy(argv[0],"wc");
+//        test[1] = NULL;
+            
+        execvp(argv[0],argv);
+        perror("execvp");
         exit(1);
     }
-    if(dup(fd)==-1)
+    else
     {
-        perror("dup");
-        exit(1);
+        wait(NULL);
     }
-    argv[0] = new char[40];
-    argv[1] = NULL;
-    strcpy(argv[0],"cat");
-    execvp(argv[0],argv);
-    perror("execvp");
 }
 
 void output(const string &input, bool isAp)
@@ -200,56 +263,63 @@ void output(const string &input, bool isAp)
     TOKEN tok2(r,sep);
     TOKEN::iterator it = tok.begin();
     TOKEN::iterator it2 = tok2.begin();
-    int i;
-    for(i =0;it != tok.end(); ++it,++i)
+    int pid=fork();
+    if(pid ==-1)
     {
-        argv[i] = new char[(*it).size()];
-        strcpy(argv[i],(*it).c_str());
+        perror("fork");
+        exit(1);
     }
-    argv[i]=NULL;
+    else if (pid == 0)
+    {
+        if(it2 == tok2.end())
+        {
+            cout << "ERROR NO FILE" << endl;
+            exit(1);
+        }
+        int i;
+        for(i =0;it != tok.end(); ++it,++i)
+        {
+            argv[i] = new char[(*it).size()];
+            strcpy(argv[i],(*it).c_str());
+        }
+        argv[i]=NULL;
 
-    if(it2 == tok2.end())
-    {
-        cout << "ERROR NO FILE" << endl;
-        return;
-    }
-    int fd = open((*it2).c_str(),flags,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-    if(fd ==-1)
-    {
-        perror("open");
+        int fd = open((*it2).c_str(),flags,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+        if(fd ==-1)
+        {
+            perror("open");
+            exit(1);
+        }
+        if(argv[0] == NULL)
+        {
+            cout << "no command" << endl;
+            close(fd);
+            exit(1);
+        }
+
+        if(dup(redirect) == -1)
+        {
+            perror("dup");
+            exit(1);
+        }
+        if(close(redirect)==-1)
+        {
+            perror("close");
+            exit(1);
+        }
+        if(dup(fd)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
+        execvp(argv[0],argv);
+        perror("execvp");
         exit(1);
     }
-    if(argv[0] == NULL)
+    else
     {
-        cout << "no command" << endl;
-        close(fd);
-        return;
+        wait(NULL);
     }
-    int oldstd = dup(redirect);
-    if(oldstd == -1)
-    {
-        perror("dup");
-        exit(1);
-    }
-    if(close(redirect)==-1)
-    {
-        perror("close");
-        exit(1);
-    }
-    if(dup(fd)==-1)
-    {
-        perror("dup");
-        exit(1);
-    }
-    //    cout << "should be deleted!!!" << endl;
-    //    char *argv[10];
-    //    argv[0]=new char[40];
-    //    strcpy(argv[0],"l");
-    //    argv[1]=NULL;
-    execvp(argv[0],argv);
-    perror("execvp");
-    exit(1);
-    oldstd = oldstd;
 }
 
 void piping(const string &input)
