@@ -238,23 +238,33 @@ void inputc(const string &input, bool is3)
 {
     string v = "<";
     string more;
+    int outp = -1;
+    int inp = -1;
     if(is3)
     {
         v = "<<<";
-        cout << "only take input from string" << endl;
         if(input.find("\"") != string::npos)
         {
-            //            cout << endl << "input=" << input << endl;
-            more = input.substr(input.find("\"")+1);
-            //            cout << "more changed=" << more << endl;
-            if(more.find("\"") == string::npos)
-            {
-                cout << "invalid use" << endl;
-                return;
-            }
-            more = more.substr(0,more.find("\""));
-            //            cout << "more is now=" << more << endl << endl;
-            //exit(1);
+            cout << endl << "<<< doesn't work correctly and has been commmented out" << endl << endl;
+            return;
+//            more = input.substr(input.find("\"")+1);
+//            if(more.find("\"") == string::npos)
+//            {
+//                cout << "invalid use" << endl;
+//                return;
+//            }
+//            more = more.substr(0,more.find("\""));
+//            int fd2[2];
+//            if(pipe(fd2) ==-1)
+//            {
+//                perror("pipe");
+//                exit(1);
+//            }
+//            char *buf = new char[more.size()];
+//            strcpy(buf,more.c_str());
+//            write(fd2[1],buf,strlen(buf));
+//            inp = fd2[0];
+//            delete [] buf;
         }
         else
         {
@@ -266,8 +276,6 @@ void inputc(const string &input, bool is3)
     string l = input.substr(0,input.find(v));
     string r = input.substr(input.find(v) + v.size());
     string old = r;
-    int outp = -1;
-    int inp = -1;
     if(!is3)
     {
         inp = openFile(old,O_RDONLY);
@@ -420,10 +428,25 @@ void piping(const string &input)
             }
             else if(l.find("\"") != string::npos)
             {
-                cout << "FIX:taking input from string" << endl;
-                exit(1);
-                string more = l.substr(l.find("\""));
-                cout << "more=" << more << endl;
+                //cout << endl <<  "<<< doesn't work correctly and has been commented out" << endl << endl;
+//                string more = l.substr(l.find("\""));
+//                if(more.find("\"") == string::npos)
+//                {
+//                    cout << "invalid use" << endl;
+//                    return;
+//                }
+//                more = more.substr(0,more.find("\""));
+//                int fd2[2];
+//                if(pipe(fd2) ==-1)
+//                {
+//                    perror("pipe");
+//                    exit(1);
+//                }
+//                char *buf = new char[more.size()];
+//                strcpy(buf,more.c_str());
+//                write(fd2[1],buf,strlen(buf));
+//                newin = fd2[0];
+//                delete [] buf;
             }
             else
             {
