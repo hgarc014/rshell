@@ -22,7 +22,7 @@ using namespace boost;
 void executeCommand(const string &input, const char cmd[]);
 void createCommand(const string &input,const char cmd[]);
 void inputc(const string &input, bool is3);
-void output(const string &input, bool isAp);
+void output(const string &input, bool isAp,int inp=-1);
 void piping(const string &input);
 
 const char SEMIS[] =";";
@@ -67,27 +67,27 @@ int main(){
         }
         else if(input.find("|") != string::npos)
         {
-            cout << "piping was called" << endl;
+            //            cout << "piping was called" << endl;
             piping(input);
         }
         else if (input.find("<<<") != string::npos)
         {
-            cout << "found <<< only" << endl;
+            //           cout << "found <<< only" << endl;
             inputc(input,true);
         }
         else if (input.find("<") != string::npos)
         {
-            cout << "found < only" << endl;
+            //           cout << "found < only" << endl;
             inputc(input,false);
         }
         else if (input.find(">>") != string::npos)
         {
-            cout << "found >> only" << endl;
+            //           cout << "found >> only" << endl;
             output(input,true);
         }
         else if (input.find(">") != string::npos)
         {
-            cout << "found > only" << endl;
+            //           cout << "found > only" << endl;
             output(input,false);
         }
         else{
@@ -172,18 +172,42 @@ void executeRedirect(const string &input,int nin, int nout, int nerr)
     argv[i] = NULL;
     if(nin >= 0)
     {
-        close(0);
-        dup(nin);
+        if(close(0)==-1)
+        {
+            perror("close");
+            exit(1);
+        }
+        if(dup(nin)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
     }
     if(nout >= 0)
     {
-        close(1);
-        dup(nout);
+        if(close(1)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
+        if(dup(nout)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
     }
     if(nerr >= 0)
     {
-        close(2);
-        dup(nerr);
+        if(close(2)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
+        if(dup(nerr)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
     }
     execvp(argv[0],argv);
     perror("execvp");
@@ -202,27 +226,16 @@ int openFile(const string &file, int flags)
         exit(1);
     }
     int fd = open((*it).c_str(),flags,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-    //    if(fd == -1)
-    //    {
-    //        perror("open");
-    //    }
+    if(fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
     return fd;
 }
 
 void inputc(const string &input, bool is3)
 {
-    //    int fd = open("r.rem",O_RDONLY);
-    //    close(0);
-    //    dup(fd);
-    //        char *test[SZ];
-    //        test[0] = new char[40];
-    //        strcpy(test[0],"wc");
-    //        test[1] = NULL;
-    //        execvp(test[0],test);
-    //        perror("execvp");
-    //        exit(1);
-    //
-    //        close(fd);
     string v = "<";
     string more;
     if(is3)
@@ -231,16 +244,16 @@ void inputc(const string &input, bool is3)
         cout << "only take input from string" << endl;
         if(input.find("\"") != string::npos)
         {
-            cout << endl << "input=" << input << endl;
+            //            cout << endl << "input=" << input << endl;
             more = input.substr(input.find("\"")+1);
-            cout << "more changed=" << more << endl;
+            //            cout << "more changed=" << more << endl;
             if(more.find("\"") == string::npos)
             {
                 cout << "invalid use" << endl;
                 return;
             }
             more = more.substr(0,more.find("\""));
-            cout << "more is now=" << more << endl << endl;
+            //            cout << "more is now=" << more << endl << endl;
             //exit(1);
         }
         else
@@ -258,15 +271,10 @@ void inputc(const string &input, bool is3)
     if(!is3)
     {
         inp = openFile(old,O_RDONLY);
-        if(inp == -1)
-        {
-            perror("open");
-            exit(1);
-        }
     }
     if(r.find(">") != string::npos)
     {
-        cout << "found > " << endl;
+        //        cout << "found > " << endl;
         old = old.substr(0,r.find(">"));
         int flags = O_RDWR|O_CREAT;
         int found =-1; 
@@ -283,108 +291,46 @@ void inputc(const string &input, bool is3)
         r = r.substr(found);
         outp = openFile(r,flags);
     }
-
-    //    string outp = " ";
-
-    //    if(r.find(">") != string::npos)
-    //    {
-    //        int flags = O_RDWR|O_CREAT;
-    //        unsigned found = r.find(">>");
-    //        if(found != string::npos)
-    //        {
-    //            flags |= O_APPEND;
-    //        }
-    //        else// if(found == string::npos)
-    //        {
-    //            found = r.find(">");
-    //            flags |= O_TRUNC;
-    //        }
-    //        r = r.substr(found);
-    //        string o = r.substr(r.find(">"));
-    //        outp = openFile(o,flags);
-    //    }
-
-    //        cout << "should close std out and replace by file" << endl;
-    //        outp = r.substr(r.find(""));
-    //        r = r.substr(0,r.find(">"));
-    //        //output(r,r.find(">>"));
-    //        //exit(1);
-    //    }
-    //    SEP sep(" ");
-    //    TOKEN tok(l,sep);
-    //    TOKEN tok2(r,sep);
-    //    TOKEN tok3(outp,sep);
-    //    TOKEN::iterator it=tok.begin();
-    //    TOKEN::iterator it2 = tok2.begin();
-    //    TOKEN::iterator it3 = tok3.begin();
-int pid = fork();
-if(pid == -1)
-{
-    perror("fork");
-}
-else if (pid == 0)
-{
-    cout << "l=" << l << endl
-        << "r=" << r << endl
-        << "old=" << old << endl;
-    executeRedirect(l,inp,outp,-1);
-    //        if(it2 == tok2.end())
-    //        {
-    //            cout << "ERROR NO FILE" << endl;
-    //            exit(1);
-    //        }
-    //        int i = 0;
-    //        for(;it != tok.end();++it,++i)
-    //        {
-    //            argv[i] = new char[(*it).size()];
-    //            strcpy(argv[i],(*it).c_str());
-    //            cout << i << "=" << argv[i] << endl;
-    //        }
-    //        argv[i] = NULL;
-    //
-    //
-    //        int fd = open((*it2).c_str(),O_RDONLY,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-    //        if(fd == -1)
-    //        {
-    //            perror("open");
-    //            exit(1);
-    //        }
-    //        //int oldstd = dup(0);
-    //        if(close(0) == -1)
-    //        {
-    //            perror("close");
-    //            exit(1);
-    //        }
-    //        if(dup(fd)==-1)
-    //        {
-    //            perror("dup");
-    //            exit(1);
-    //        }
-    //        cout << "bout to execute" << endl;
-    //        //        char *test[SZ];
-    //        //        test[0] = new char[40];
-    //        //        strcpy(argv[0],"wc");
-    //        //        test[1] = NULL;
-    //
-    //        execvp(argv[0],argv);
-    //        perror("execvp");
-    //        exit(1);
-}
-else
-{
-    wait(NULL);
-    if(inp != -1)
+    int pid = fork();
+    if(pid == -1)
     {
-        close(inp);
+        perror("fork");
     }
-    if(outp != -1)
+    else if (pid == 0)
     {
-        close(outp);
+        //    cout << "l=" << l << endl
+        //        << "r=" << r << endl
+        //        << "old=" << old << endl;
+        executeRedirect(l,inp,outp,-1);
+    }
+    else
+    {
+        if(wait(NULL)==-1)
+        {
+            perror("wait");
+            exit(1);
+        }
+
+        if(inp != -1)
+        {
+            if(close(inp)==-1)
+            {
+                perror("close");
+                exit(1);
+            }
+        }
+        if(outp != -1)
+        {
+            if(close(outp)==-1)
+            {
+                perror("close");
+                exit(1);
+            }
+        }
     }
 }
-}
 
-void output(const string &input, bool isAp)
+void output(const string &input, bool isAp, int inp)
 {
     string val;
     //char *argv[SZ];
@@ -405,17 +351,14 @@ void output(const string &input, bool isAp)
     int found = input.find(val);
     if(input.find("2>") !=string::npos)
         --found;
+    if(input.find("1>") !=string::npos)
+        --found;
     string l = input.substr(0,found);
     string r = input.substr(input.find(val)+val.size());
-    cout << "l=" << l << endl;
-    cout << "r=" << r << endl;
+    //    cout << "l=" << l << endl;
+    //    cout << "r=" << r << endl;
     int fd = openFile(r,flags);
-    if(fd == -1)
-    {
-        perror("open");
-        return;
-    }
-   int pid=fork();
+    int pid=fork();
     if(pid ==-1)
     {
         perror("fork");
@@ -423,15 +366,23 @@ void output(const string &input, bool isAp)
     }
     else if (pid == 0)
     {
-       if(input.find("2>") != string::npos)
-            executeRedirect(l,-1,-1,fd);
+        if(input.find("2>") != string::npos)
+            executeRedirect(l,inp,-1,fd);
         else
-            executeRedirect(l,-1,fd,-1);
-   }
+            executeRedirect(l,inp,fd,-1);
+    }
     else
     {
-        wait(NULL);
-        close(fd);
+        if(wait(NULL)==-1)
+        {
+            perror("WAIT");
+            exit(1);
+        }
+        if(close(fd)==-1)
+        {
+            perror("CLOSE");
+            exit(1);
+        }
     }
 }
 
@@ -440,8 +391,8 @@ void piping(const string &input)
     int fd[2];
     string l = input.substr(0,input.find("|"));
     string r = input.substr(input.find("|")+1);
-    cout << "l is=" << l << endl;
-    cout << "r is=" << r << endl;
+    //    cout << "l is=" << l << endl;
+    //    cout << "r is=" << r << endl;
     //    SEP sep(" ");
     //    TOKEN tok(l,sep);
     //    TOKEN tok2(r,sep);
@@ -461,12 +412,10 @@ void piping(const string &input)
         int newin = -1;
         if(l.find("<") != string::npos)
         {
-            cout << "take input from file" << endl;
             if(l.find("<<<") == string::npos)
             {
                 string file = l.substr(l.find("<")+1);
                 l = l.substr(0,l.find("<"));
-                cout << "opening file=" << file << endl;
                 newin = openFile(file,O_RDONLY);
             }
             else if(l.find("\"") != string::npos)
@@ -482,8 +431,8 @@ void piping(const string &input)
                 exit(1);
             }
         }
-       executeRedirect(l,newin,fd[1],-1);
-   }
+        executeRedirect(l,newin,fd[1],-1);
+    }
     else
     {
         int status;
@@ -501,37 +450,74 @@ void piping(const string &input)
         }
         if(childDieNormal && childExit == 1)
         {
-            cout << "child exited badly" << endl;
+            cout << "child exited badly(bad command)" << endl;
             return;
         }
 
         int oldstd = dup(0);
+        if(oldstd == -1)
+        {
+            perror("dup");
+            exit(1);
+        }
+
         if(r.find("|") != string::npos)
         {
-            cout << endl << "calling piping again on" << endl
-                << "r=" << r << endl;
-            close(0);
-            dup(fd[0]);
+            //            cout << endl << "calling piping again on" << endl
+            //                << "r=" << r << endl;
+            if(close(0)==-1)
+            {
+                perror("close");
+                exit(1);
+            }
+            if(dup(fd[0])==-1)
+            {
+                perror("dup");
+                exit(1);
+            }
             piping(r);
         }
         else if(r.find(">") != string::npos)
         {
-            cout << endl << "looks like a save to file at the end" << endl;
-            int outp = r.find(">");
+            bool append = r.find(">>") != string::npos;
+            output(r,append,fd[0]);
             return;
         }
         else
         {
             int apid = fork();
+            if(apid == -1)
+            {
+                perror("FORK");
+                exit(1);
+            }
             if(apid == 0)
                 executeRedirect(r,fd[0],-1,-1);
             else
-                wait(NULL);
+            {
+                if(wait(NULL) == -1)
+                {
+                    perror("WAIT");
+                    exit(1);
+                }
+            }
         }
-        cout << "done exuting " << endl;
-        close(0);
-        close(fd[0]);
-        dup(oldstd);
-   }
+        //        cout << "done exuting " << endl;
+        if(close(0) == -1)
+        {
+            perror("CLOSE");
+            exit(1);
+        }
+        if(close(fd[0])==-1)
+        {
+            perror("CLOSE");
+            exit(1);
+        }
+        if(dup(oldstd)==-1)
+        {
+            perror("dup");
+            exit(1);
+        }
+    }
 }
 
