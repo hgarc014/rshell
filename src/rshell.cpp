@@ -146,7 +146,7 @@ void executeCommand(const string &input,const char cmd[]){
     argv[i] = 0;
     if(execvp(argv[0],argv) == -1){
         perror(argv[0]);
-        for(it = tok.begin(); it != tok.end(); ++it)
+        for(i = 0,it = tok.begin(); it != tok.end(); ++it,++i)
             delete [] argv[i];
         exit(1);
     }
@@ -211,7 +211,7 @@ void executeRedirect(const string &input,int nin, int nout, int nerr)
     }
     execvp(argv[0],argv);
     perror("execvp");
-    for(it = tok.begin(); it != tok.end(); ++it)
+    for(i = 0,it = tok.begin(); it != tok.end(); ++it,++i)
         delete [] argv[i];
     exit(1);
 }
@@ -240,31 +240,32 @@ void inputc(const string &input, bool is3)
     string more;
     int outp = -1;
     int inp = -1;
+    int fd2[2];
     if(is3)
     {
         v = "<<<";
         if(input.find("\"") != string::npos)
         {
-            cout << endl << "<<< doesn't work correctly and has been commmented out" << endl << endl;
-            return;
-//            more = input.substr(input.find("\"")+1);
-//            if(more.find("\"") == string::npos)
-//            {
-//                cout << "invalid use" << endl;
-//                return;
-//            }
-//            more = more.substr(0,more.find("\""));
-//            int fd2[2];
-//            if(pipe(fd2) ==-1)
-//            {
-//                perror("pipe");
-//                exit(1);
-//            }
-//            char *buf = new char[more.size()];
-//            strcpy(buf,more.c_str());
-//            write(fd2[1],buf,strlen(buf));
-//            inp = fd2[0];
-//            delete [] buf;
+            //            cout << endl << "<<< doesn't work correctly and has been commmented out" << endl << endl;
+            //            return;
+            more = input.substr(input.find("\"")+1);
+            if(more.find("\"") == string::npos)
+            {
+                cout << "invalid use" << endl;
+                return;
+            }
+            more = more.substr(0,more.find("\""));
+            if(pipe(fd2) ==-1)
+            {
+                perror("pipe");
+                exit(1);
+            }
+            char *buf = new char[more.size()];
+            strcpy(buf,more.c_str());
+            write(fd2[1],buf,strlen(buf));
+            close(fd2[1]);
+            inp = fd2[0];
+            delete [] buf;
         }
         else
         {
@@ -318,6 +319,11 @@ void inputc(const string &input, bool is3)
             perror("wait");
             exit(1);
         }
+        //        if(is3)
+        //        {
+        //            close(fd2[0]);
+        //            cout << "closed fd" << endl;
+        //        }
 
         if(inp != -1)
         {
@@ -397,6 +403,7 @@ void output(const string &input, bool isAp, int inp)
 void piping(const string &input)
 {
     int fd[2];
+    int fd2[2];
     string l = input.substr(0,input.find("|"));
     string r = input.substr(input.find("|")+1);
     //    cout << "l is=" << l << endl;
@@ -420,6 +427,7 @@ void piping(const string &input)
         int newin = -1;
         if(l.find("<") != string::npos)
         {
+            string more;
             if(l.find("<<<") == string::npos)
             {
                 string file = l.substr(l.find("<")+1);
@@ -428,25 +436,44 @@ void piping(const string &input)
             }
             else if(l.find("\"") != string::npos)
             {
+                more = input.substr(input.find("\"")+1);
+                if(more.find("\"") == string::npos)
+                {
+                    cout << "invalid use" << endl;
+                    return;
+                }
+                more = more.substr(0,more.find("\""));
+                if(pipe(fd2) ==-1)
+                {
+                    perror("pipe");
+                    exit(1);
+                }
+                char *buf = new char[more.size()];
+                strcpy(buf,more.c_str());
+                write(fd2[1],buf,strlen(buf));
+                close(fd2[1]);
+                newin = fd2[0];
+                delete [] buf;
+
                 //cout << endl <<  "<<< doesn't work correctly and has been commented out" << endl << endl;
-//                string more = l.substr(l.find("\""));
-//                if(more.find("\"") == string::npos)
-//                {
-//                    cout << "invalid use" << endl;
-//                    return;
-//                }
-//                more = more.substr(0,more.find("\""));
-//                int fd2[2];
-//                if(pipe(fd2) ==-1)
-//                {
-//                    perror("pipe");
-//                    exit(1);
-//                }
-//                char *buf = new char[more.size()];
-//                strcpy(buf,more.c_str());
-//                write(fd2[1],buf,strlen(buf));
-//                newin = fd2[0];
-//                delete [] buf;
+                //                string more = l.substr(l.find("\""));
+                //                if(more.find("\"") == string::npos)
+                //                {
+                //                    cout << "invalid use" << endl;
+                //                    return;
+                //                }
+                //                more = more.substr(0,more.find("\""));
+                //                int fd2[2];
+                //                if(pipe(fd2) ==-1)
+                //                {
+                //                    perror("pipe");
+                //                    exit(1);
+                //                }
+                //                char *buf = new char[more.size()];
+                //                strcpy(buf,more.c_str());
+                //                write(fd2[1],buf,strlen(buf));
+                //                newin = fd2[0];
+                //                delete [] buf;
             }
             else
             {
