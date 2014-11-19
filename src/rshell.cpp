@@ -218,13 +218,12 @@ int openFile(const string &file, int flags)
     if(it == tok.end())
     {
         cout << "no file" << endl;
-        exit(1);
+        return -1;
     }
     int fd = open((*it).c_str(),flags,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
     if(fd == -1)
     {
         perror("open");
-        exit(1);
     }
     return fd;
 }
@@ -255,8 +254,15 @@ void inputc(const string &input, bool is3)
             }
             char *buf = new char[more.size()];
             strcpy(buf,more.c_str());
-            write(fd2[1],buf,strlen(buf));
-            close(fd2[1]);
+            if(write(fd2[1],buf,strlen(buf))==-1)
+            {
+                perror("write");
+                exit(1);
+            }
+            if(close(fd2[1])==-1)
+            {
+                perror("close");
+            }
             inp = fd2[0];
             delete [] buf;
         }
@@ -273,6 +279,10 @@ void inputc(const string &input, bool is3)
     if(!is3)
     {
         inp = openFile(old,O_RDONLY);
+        if(inp == -1)
+        {
+            return;
+        }
     }
     if(r.find(">") != string::npos)
     {
@@ -291,6 +301,10 @@ void inputc(const string &input, bool is3)
         }
         r = r.substr(found);
         outp = openFile(r,flags);
+        if(inp == -1)
+        {
+            return;
+        }
     }
     int pid = fork();
     if(pid == -1)
@@ -354,6 +368,8 @@ void output(const string &input, bool isAp, int inp)
     string l = input.substr(0,found);
     string r = input.substr(input.find(val)+val.size());
     int fd = openFile(r,flags);
+    if(fd == -1)
+        return;
     int pid=fork();
     if(pid ==-1)
     {
@@ -410,6 +426,8 @@ void piping(const string &input)
                 string file = l.substr(l.find("<")+1);
                 l = l.substr(0,l.find("<"));
                 newin = openFile(file,O_RDONLY);
+                if(newin == -1)
+                    exit(1);
             }
             else if(l.find("\"") != string::npos)
             {
@@ -427,8 +445,16 @@ void piping(const string &input)
                 }
                 char *buf = new char[more.size()];
                 strcpy(buf,more.c_str());
-                write(fd2[1],buf,strlen(buf));
-                close(fd2[1]);
+                if(write(fd2[1],buf,strlen(buf))==-1)
+                {
+                    perror("write");
+                    exit(1);
+                }
+                if(close(fd2[1])==-1)
+                {
+                    perror("close");
+                        exit(1);
+                }
                 newin = fd2[0];
                 delete [] buf;
             }
