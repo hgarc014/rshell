@@ -23,7 +23,7 @@ https://github.com/hgarc014/rshell/blob/master/LICENSE
 4. execute rshell
 `bin/rshell`
 
-##Bugs rshell
+##Bugs/Limitations rshell
 
 1. having different symbols in one line will cause an error in execvp
   * `ls && ls || ls ;exit`
@@ -40,6 +40,13 @@ command and then look for a new line of commands
   * `google-chrome &`
 7. cannot run a command in quotes
   * `"ls"`
+8. running a command with piping and input or output in the center of the pipe line will result in a disconnection of the piping
+9. input from string (<<<) results in no new line character.
+10. having multiple outputs in a row will result in adding to all including the last one if input redirection was used first. However, if no input redirection was used first then an error will appear 
+11. having multiple inputs will result in taking the first one being taken only
+12. having multiple | without commands will result in an error being displayed
+   * having multiple (<)s without commands will only result in grabing the first one
+   * having multiple (>)s will result in no error but empting any files after the no command
 
 ##Bugs/Limitations ls
 

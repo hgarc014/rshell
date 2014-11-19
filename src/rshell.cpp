@@ -67,27 +67,22 @@ int main(){
         }
         else if(input.find("|") != string::npos)
         {
-            //            cout << "piping was called" << endl;
             piping(input);
         }
         else if (input.find("<<<") != string::npos)
         {
-            //           cout << "found <<< only" << endl;
             inputc(input,true);
         }
         else if (input.find("<") != string::npos)
         {
-            //           cout << "found < only" << endl;
             inputc(input,false);
         }
         else if (input.find(">>") != string::npos)
         {
-            //           cout << "found >> only" << endl;
             output(input,true);
         }
         else if (input.find(">") != string::npos)
         {
-            //           cout << "found > only" << endl;
             output(input,false);
         }
         else{
@@ -246,8 +241,6 @@ void inputc(const string &input, bool is3)
         v = "<<<";
         if(input.find("\"") != string::npos)
         {
-            //            cout << endl << "<<< doesn't work correctly and has been commmented out" << endl << endl;
-            //            return;
             more = input.substr(input.find("\"")+1);
             if(more.find("\"") == string::npos)
             {
@@ -283,7 +276,6 @@ void inputc(const string &input, bool is3)
     }
     if(r.find(">") != string::npos)
     {
-        //        cout << "found > " << endl;
         old = old.substr(0,r.find(">"));
         int flags = O_RDWR|O_CREAT;
         int found =-1; 
@@ -307,9 +299,6 @@ void inputc(const string &input, bool is3)
     }
     else if (pid == 0)
     {
-        //    cout << "l=" << l << endl
-        //        << "r=" << r << endl
-        //        << "old=" << old << endl;
         executeRedirect(l,inp,outp,-1);
     }
     else
@@ -319,11 +308,6 @@ void inputc(const string &input, bool is3)
             perror("wait");
             exit(1);
         }
-        //        if(is3)
-        //        {
-        //            close(fd2[0]);
-        //            cout << "closed fd" << endl;
-        //        }
 
         if(inp != -1)
         {
@@ -369,8 +353,6 @@ void output(const string &input, bool isAp, int inp)
         --found;
     string l = input.substr(0,found);
     string r = input.substr(input.find(val)+val.size());
-    //    cout << "l=" << l << endl;
-    //    cout << "r=" << r << endl;
     int fd = openFile(r,flags);
     int pid=fork();
     if(pid ==-1)
@@ -406,11 +388,6 @@ void piping(const string &input)
     int fd2[2];
     string l = input.substr(0,input.find("|"));
     string r = input.substr(input.find("|")+1);
-    //    cout << "l is=" << l << endl;
-    //    cout << "r is=" << r << endl;
-    //    SEP sep(" ");
-    //    TOKEN tok(l,sep);
-    //    TOKEN tok2(r,sep);
     if(pipe(fd)==-1)
     {
         perror("pipe");
@@ -454,26 +431,6 @@ void piping(const string &input)
                 close(fd2[1]);
                 newin = fd2[0];
                 delete [] buf;
-
-                //cout << endl <<  "<<< doesn't work correctly and has been commented out" << endl << endl;
-                //                string more = l.substr(l.find("\""));
-                //                if(more.find("\"") == string::npos)
-                //                {
-                //                    cout << "invalid use" << endl;
-                //                    return;
-                //                }
-                //                more = more.substr(0,more.find("\""));
-                //                int fd2[2];
-                //                if(pipe(fd2) ==-1)
-                //                {
-                //                    perror("pipe");
-                //                    exit(1);
-                //                }
-                //                char *buf = new char[more.size()];
-                //                strcpy(buf,more.c_str());
-                //                write(fd2[1],buf,strlen(buf));
-                //                newin = fd2[0];
-                //                delete [] buf;
             }
             else
             {
@@ -513,8 +470,6 @@ void piping(const string &input)
 
         if(r.find("|") != string::npos)
         {
-            //            cout << endl << "calling piping again on" << endl
-            //                << "r=" << r << endl;
             if(close(0)==-1)
             {
                 perror("close");
@@ -552,7 +507,6 @@ void piping(const string &input)
                 }
             }
         }
-        //        cout << "done exuting " << endl;
         if(close(0) == -1)
         {
             perror("CLOSE");
