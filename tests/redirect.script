@@ -1,0 +1,377 @@
+Script started on Tue 18 Nov 2014 09:47:55 PM PST
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ valgrind [K[K[K[K[K[K[K[K[K# we will run a piping command with vlgr[K[K[Kalgrind to show no m emory leaks
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ valgrind bin/rshell
+==4955== Memcheck, a memory error detector
+==4955== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
+==4955== Using Valgrind-3.10.0.SVN and LibVEX; rerun with -h for copyright info
+==4955== Command: bin/rshell
+==4955== 
+henry@henry-HP-ENVY-dv7-Notebook-PC$ cat README.md | grep rshell | wc -l
+==4956== Invalid write of size 1
+==4956==    at 0x4C2E1F3: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x40268D: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956==  Address 0x5a210f3 is 0 bytes after a block of size 3 alloc'd
+==4956==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956== 
+==4956== Invalid read of size 1
+==4956==    at 0x4C2DBB0: __GI_strchr (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x54133F8: execvpe (execvpe.c:60)
+==4956==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956==  Address 0x5a210f3 is 0 bytes after a block of size 3 alloc'd
+==4956==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956== 
+==4956== Invalid read of size 1
+==4956==    at 0x4C2E0F4: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x5413544: execvpe (execvpe.c:101)
+==4956==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956==  Address 0x5a210f3 is 0 bytes after a block of size 3 alloc'd
+==4956==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956== 
+==4956== Invalid read of size 2
+==4956==    at 0x4C2FDC0: __GI_memcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x541359D: execvpe (execvpe.c:126)
+==4956==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956==  Address 0x5a210f2 is 2 bytes inside a block of size 3 alloc'd
+==4956==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956== 
+==4956== Syscall param execve(argv[i]) points to unaddressable byte(s)
+==4956==    at 0x5412DB7: execve (execve.c:33)
+==4956==    by 0x5413608: execvpe (execvpe.c:149)
+==4956==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956==  Address 0x5a210f3 is 0 bytes after a block of size 3 alloc'd
+==4956==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4956==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4956==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4956== 
+==4957== Invalid write of size 1
+==4957==    at 0x4C2E1F3: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x40268D: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957==  Address 0x5a211c4 is 0 bytes after a block of size 4 alloc'd
+==4957==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957== 
+==4957== Invalid read of size 1
+==4957==    at 0x4C2DBB0: __GI_strchr (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x54133F8: execvpe (execvpe.c:60)
+==4957==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957==  Address 0x5a211c4 is 0 bytes after a block of size 4 alloc'd
+==4957==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957== 
+==4957== Invalid read of size 1
+==4957==    at 0x4C2E0F4: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x5413544: execvpe (execvpe.c:101)
+==4957==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957==  Address 0x5a211c4 is 0 bytes after a block of size 4 alloc'd
+==4957==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957== 
+==4957== Invalid read of size 1
+==4957==    at 0x4C2FF30: __GI_memcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x541359D: execvpe (execvpe.c:126)
+==4957==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957==  Address 0x5a211c4 is 0 bytes after a block of size 4 alloc'd
+==4957==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957== 
+==4957== Syscall param execve(argv[i]) points to unaddressable byte(s)
+==4957==    at 0x5412DB7: execve (execve.c:33)
+==4957==    by 0x5413608: execvpe (execvpe.c:149)
+==4957==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957==  Address 0x5a211c4 is 0 bytes after a block of size 4 alloc'd
+==4957==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4957==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x4038AB: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4957==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4957== 
+==4958== Invalid write of size 1
+==4958==    at 0x4C2E1F3: strcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x40268D: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958==  Address 0x5a211c2 is 0 bytes after a block of size 2 alloc'd
+==4958==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958== 
+==4958== Invalid read of size 1
+==4958==    at 0x4C2DBB0: __GI_strchr (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x54133F8: execvpe (execvpe.c:60)
+==4958==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958==  Address 0x5a211c2 is 0 bytes after a block of size 2 alloc'd
+==4958==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958== 
+==4958== Invalid read of size 1
+==4958==    at 0x4C2E0F4: strlen (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x5413544: execvpe (execvpe.c:101)
+==4958==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958==  Address 0x5a211c2 is 0 bytes after a block of size 2 alloc'd
+==4958==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958== 
+==4958== Invalid read of size 1
+==4958==    at 0x4C2FF30: __GI_memcpy (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x541359D: execvpe (execvpe.c:126)
+==4958==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958==  Address 0x5a211c2 is 0 bytes after a block of size 2 alloc'd
+==4958==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958== 
+==4958== Syscall param execve(argv[i]) points to unaddressable byte(s)
+==4958==    at 0x5412DB7: execve (execve.c:33)
+==4958==    by 0x5413608: execvpe (execvpe.c:149)
+==4958==    by 0x40282F: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958==  Address 0x5a211c2 is 0 bytes after a block of size 2 alloc'd
+==4958==    at 0x4C2B800: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4958==    by 0x402647: executeRedirect(std::string const&, int, int, int) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403AC3: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x403A0D: piping(std::string const&) (in /home/henry/cs100/rshell/bin/rshell)
+==4958==    by 0x401C29: main (in /home/henry/cs100/rshell/bin/rshell)
+==4958== 
+8
+henry@henry-HP-ENVY-dv7-Notebook-PC$ exit
+==4959== 
+==4959== HEAP SUMMARY:
+==4959==     in use at exit: 324 bytes in 7 blocks
+==4959==   total heap usage: 88 allocs, 81 frees, 10,975 bytes allocated
+==4959== 
+==4959== LEAK SUMMARY:
+==4959==    definitely lost: 0 bytes in 0 blocks
+==4959==    indirectly lost: 0 bytes in 0 blocks
+==4959==      possibly lost: 324 bytes in 7 blocks
+==4959==    still reachable: 0 bytes in 0 blocks
+==4959==         suppressed: 0 bytes in 0 blocks
+==4959== Rerun with --leak-check=full to see details of leaked memory
+==4959== 
+==4959== For counts of detected and suppressed errors, rerun with: -v
+==4959== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==4955== 
+==4955== HEAP SUMMARY:
+==4955==     in use at exit: 269 bytes in 5 blocks
+==4955==   total heap usage: 86 allocs, 81 frees, 10,920 bytes allocated
+==4955== 
+==4955== LEAK SUMMARY:
+==4955==    definitely lost: 0 bytes in 0 blocks
+==4955==    indirectly lost: 0 bytes in 0 blocks
+==4955==      possibly lost: 269 bytes in 5 blocks
+==4955==    still reachable: 0 bytes in 0 blocks
+==4955==         suppressed: 0 bytes in 0 blocks
+==4955== Rerun with --leak-check=full to see details of leaked memory
+==4955== 
+==4955== For counts of detected and suppressed errors, rerun with: -v
+==4955== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ # we can see that we only have possibly lost [K
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ #t[K this is only because we have memory still in use when e w[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cw e exit the progra.
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ #there are no memory leaks in the program since we have n o indei[K[K[K[K[Kmemoyr lost
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ 
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ #now we will run rshell again
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ 
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ bin/rshell
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #we will now run a sci ript to test our test cases
+henry@henry-HP-ENVY-dv7-Notebook-PC$ 
+henry@henry-HP-ENVY-dv7-Notebook-PC$ ./tests/redirtest.sh
+
+# testing redirect: echo this is a test > newfile.rem
+# checking contents of: newfile.rem
+this is a test
+
+# testing redirect without spacing: echo this is a test>newfile.rem
+# checking contents of: newfile.rem
+this is a test
+
+# testing append: echo test number 2 >> newfile.rem
+# checking contents of: newfile.rem
+this is a test
+test number 2
+
+# testing error redirect: cat doesntExist 2> error.rem
+# checking contents of: error.rem
+cat: doesntExist: No such file or directory
+
+# testing error redirect w/out spacing: cat doesntExist 2>error.rem
+# checking contents of: error.rem
+cat: doesntExist: No such file or directory
+
+# testing error append: cat cantDoIt 2>> error.rem
+# checking contents of: error.rem
+cat: doesntExist: No such file or directory
+cat: cantDoIt: No such file or directory
+
+# testing error append w/out spacing: cat cantDoIt 2>>error.rem
+# checking contents of: error.rem
+cat: doesntExist: No such file or directory
+cat: cantDoIt: No such file or directory
+cat: cantDoIt: No such file or directory
+
+# testing input: cat < newfile.rem
+this is a test
+test number 2
+# checking contents of: newfile.rem
+this is a test
+test number 2
+
+# testing input from string: cat <<< "a test from string"
+a test from string
+
+# testing input from string + redirect: cat <<< "testing from string" > string.rem
+# checking contents of: string.rem
+testing from string
+
+# testing input from string + redirect: cat <<< "adding to file" > string.rem
+# checking contents of: string.rem
+adding to file
+
+# testing input + redirect: cat < newfile.rem > newfile2.rem
+# checking contents of: newfile2.rem
+this is a test
+test number 2
+
+# testing input + append: cat < newfile.rem >> newfile2.rem
+# checking contents of: newfile2.rem
+this is a test
+test number 2
+this is a test
+test number 2
+
+# testing mult in: cat < newfile.rem < newfile2.rem
+this is a test
+test number 2
+this is a test
+test number 2
+
+# testing mult out: cat newfile.rem > newfile2.rem > lower.rem
+# checking contents of: newfile2.rem
+# checking contents of: lower.rem
+this is a test
+test number 2
+
+# testing piping: cat newfile.rem | cat | cat | grep test | grep 2
+test number 2
+
+# testing input,piping: cat < newfile.rem | grep test | cat | grep 2
+test number 2
+
+# testing input,piping from string: cat <<< "TESTING OUTPUT" | grep TEST | cat
+TESTING OUTPUT
+
+# testing piping,output: cat newfile.rem | grep test | cat | grep 2| wc > string.rem
+# checking contents of: string.rem
+      1       3      14
+
+# testing piping,output append: cat newfile.rem | grep test | cat >> string.rem
+# checking contents of: string.rem
+      1       3      14
+this is a test
+test number 2
+
+# testing piping,output error: cat newfile.rem | grep test | cat | opps 2> string.rem
+# checking contents of: string.rem
+./tests/redirtest.sh: line 20: opps: command not found
+
+# testing piping,output error append: cat newfile.rem | grep test | cat | ouch 2>> string.rem
+# checking contents of: string.rem
+./tests/redirtest.sh: line 20: opps: command not found
+./tests/redirtest.sh: line 20: ouch: command not found
+
+# testing input,piping,output: cat < newfile.rem | tr A-Z a-z | tee lower.rem | tr a-z A-Z > upper.rem
+# checking contents of: lower.rem
+this is a test
+test number 2
+# checking contents of: upper.rem
+THIS IS A TEST
+TEST NUMBER 2
+
+
+# Errors/misuse below
+
+# testing input inside piping: cat < newfile.rem | cat | cat < lower.rem| cat
+this is a test
+test number 2
+
+# testing ouput inside files: cat < lower.rem | cat | cat > string.rem | cat | cat > upper.rem
+henry@henry-HP-ENVY-dv7-Notebook-PC$ 
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #not all bugs and errors are listed in the test script
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #for a list of more tet st cases               t the tests    cases see tests/redirtest.sh
+henry@henry-HP-ENVY-dv7-Notebook-PC$ #bugs and errors are listed in the rEAD    README file
+henry@henry-HP-ENVY-dv7-Notebook-PC$ exit
+]0;henry@henry-HP-ENVY-dv7-Notebook-PC: ~/cs100/rshellhenry@henry-HP-ENVY-dv7-Notebook-PC:~/cs100/rshell$ exit
+exit
+
+Script done on Tue 18 Nov 2014 09:51:59 PM PST
