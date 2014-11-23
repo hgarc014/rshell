@@ -18,6 +18,8 @@ using namespace boost;
 
 #define TOKEN tokenizer<char_separator<char> >
 #define SEP char_separator<char>
+//checksyscalls does not find this
+//#define CHECKNEG(x,y) if(x==-1){perror(y);exit(1);} 
 
 void executeCommand(const string &input, const char cmd[]);
 void createCommand(const string &input,const char cmd[]);
