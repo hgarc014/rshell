@@ -6,12 +6,15 @@
 #include <errno.h>
 #include <pwd.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <dirent.h>
 
 #include <boost/tokenizer.hpp>
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <map>
 
 using namespace std;
 using namespace boost;
@@ -21,12 +24,7 @@ using namespace boost;
 //checksyscalls does not find this
 //#define CHECKNEG(x,y) if(x==-1){perror(y);exit(1);} 
 
-void executeCommand(const string &input, const char cmd[]);
-void createCommand(const string &input,const char cmd[]);
-void inputc(const string &input, bool is3);
-void output(const string &input, bool isAp,int inp=-1);
-void piping(const string &input);
-
+//constant variables
 const char SEMIS[] =";";
 const char ANDS[] = "&&";
 const char ORS[] = "||";
@@ -34,13 +32,27 @@ const char EXIT[] = "exit";
 const int SZ = 50;
 const string LINE(40, '-');
 
+//functions
+void executeCommand(const string &input, const char cmd[]);
+void createCommand(const string &input,const char cmd[]);
+void inputc(const string &input, bool is3);
+void output(const string &input, bool isAp,int inp=-1);
+void piping(const string &input);
+string getcmd(string file);
+void replacetil(string &s);
+
+//signal handlers
+void handle_c(int signum);
+void handle_z(int signum);
+
 int main(){
+//    signal(SIGINT,handle_c);
+    signal(SIGTSTP,handle_z);
 
     char machine[SZ];
     string user,
            all,
            input;
-
     struct passwd *pass = getpwuid(getuid());
     int host = gethostname(machine,SZ);
 
@@ -141,7 +153,11 @@ void executeCommand(const string &input,const char cmd[]){
         strcpy(argv[i],(*it).c_str());
     }
     argv[i] = 0;
-    if(execvp(argv[0],argv) == -1){
+
+    string first = getcmd(argv[0]);
+    //cout << "first=" << first << endl << endl;
+
+    if(execv(first.c_str(),argv) == -1){
         perror(argv[0]);
         for(i = 0,it = tok.begin(); it != tok.end(); ++it,++i)
             delete [] argv[i];
@@ -206,8 +222,10 @@ void executeRedirect(const string &input,int nin, int nout, int nerr)
             exit(1);
         }
     }
-    execvp(argv[0],argv);
-    perror("execvp");
+    
+string path = getcmd(argv[0]);
+    execv(path.c_str(),argv);
+    perror("execv");
     for(i = 0,it = tok.begin(); it != tok.end(); ++it,++i)
         delete [] argv[i];
     exit(1);
@@ -553,3 +571,74 @@ void piping(const string &input)
     }
 }
 
+string getcmd(string file)
+{
+    char *path = getenv("PATH");
+    if(path == NULL)
+    {
+        perror("getenv");
+        exit(1);
+    }
+    string temp = path;
+    SEP sep(":");
+    TOKEN tok(temp,sep);
+    TOKEN::iterator it = tok.begin();
+    DIR *dirp;
+    dirent *direntp;
+    for(;it != tok.end(); ++it)
+    {
+        string temp = *it;
+        replacetil(temp);
+        dirp = opendir(temp.c_str());
+        if(dirp == NULL)
+        {
+            perror("opendir");
+            exit(1);
+        }
+        while((direntp=readdir(dirp)))
+        {
+            if(direntp == NULL)
+            {
+                perror("readdir");
+                exit(1);
+            }
+            if(file == direntp->d_name)
+            {
+                //cout << "found " << file << " at=" << temp << endl;
+                return temp + "/" + file;
+            }
+        }
+    }
+    return file;
+}
+
+void replacetil(string &s)
+{
+    char *h = getenv("HOME");
+    if(h == NULL)
+    {
+        perror("getenv");
+        exit(1);
+    }
+    string home = h;
+    home +="/";
+
+    if(s.find("~/") == 0)
+    {
+        s.replace(0,2,home,0,home.size());
+    }
+    else if(s.find("~") == 0)
+    {
+        s.replace(0,1,home,0,home.size());
+    }
+}
+
+void handle_c(int signum)
+{
+    cout << "ctrl + c was pressed" << endl;
+}
+void handle_z(int signum)
+{
+    cout << "ctrl + z was pressed" << endl;
+    raise(SIGSTOP);
+}
