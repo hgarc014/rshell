@@ -29,6 +29,7 @@ const char SEMIS[] =";";
 const char ANDS[] = "&&";
 const char ORS[] = "||";
 const char EXIT[] = "exit";
+const char CD[] = "cd";
 const int SZ = 50;
 const string LINE(40, '-');
 
@@ -69,7 +70,14 @@ int main(){
         all = "$ ";
     }
 
-    cout << all;
+    char curdir[BUFSIZ];
+    if(getcwd(curdir,BUFSIZ)==NULL)
+    {
+        perror("getcwd");
+        exit(1);
+    }
+
+    cout << curdir << endl << all;
     while(getline(cin, input)){
         if(input.find("#") != string::npos){
             input = input.substr(0,input.find("#"));
@@ -102,7 +110,12 @@ int main(){
         else{
             createCommand(input, SEMIS);
         }
-        cout << all;
+        if(getcwd(curdir,BUFSIZ)==NULL)
+        {
+            perror("getcwd");
+            exit(1);
+        }
+        cout << curdir << endl << all;
     }
 }
 
@@ -144,8 +157,37 @@ void executeCommand(const string &input,const char cmd[]){
     SEP sep(" ");
     TOKEN tok(input, sep);
     TOKEN::iterator it = tok.begin();
-    if(it != tok.end() && (*it) == EXIT){
-        exit(10);
+    //    if(it != tok.end() && (*it) == EXIT){
+    //        exit(10);
+    //    }
+    if(it != tok.end())
+    {
+        if((*it) == EXIT)
+            exit(10);
+        if((*it) == CD)
+        {
+            ++it;
+            if(it == tok.end())
+            {
+                string home = "~";
+                replacetil(home);
+                if(chdir(home.c_str())==-1)
+                {
+                    perror("chdir");
+                    exit(1);
+                }
+            }
+            else
+            {
+                if(chdir((*it).c_str())== -1)
+                {
+                    perror("chdir");
+                    exit(1);
+                }
+            }
+            return;
+        }
+        //call function
     }
     int i = 0;
     for(; it != tok.end(); ++it,++i){
@@ -222,8 +264,8 @@ void executeRedirect(const string &input,int nin, int nout, int nerr)
             exit(1);
         }
     }
-    
-string path = getcmd(argv[0]);
+
+    string path = getcmd(argv[0]);
     execv(path.c_str(),argv);
     perror("execv");
     for(i = 0,it = tok.begin(); it != tok.end(); ++it,++i)
@@ -473,7 +515,7 @@ void piping(const string &input)
                 if(close(fd2[1])==-1)
                 {
                     perror("close");
-                        exit(1);
+                    exit(1);
                 }
                 newin = fd2[0];
                 delete [] buf;
@@ -636,6 +678,7 @@ void replacetil(string &s)
 void handle_c(int signum)
 {
     cout << "ctrl + c was pressed" << endl;
+
 }
 void handle_z(int signum)
 {
