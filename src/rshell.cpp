@@ -30,8 +30,15 @@ const char ANDS[] = "&&";
 const char ORS[] = "||";
 const char EXIT[] = "exit";
 const char CD[] = "cd";
+const char FG[] = "fg";
+const char BG[] = "bg";
 const int SZ = 50;
 const string LINE(40, '-');
+
+//child variable, do not change unless necessary
+pid_t procid =0;
+int pipefd[2];
+//string changedir;
 
 //functions
 void executeCommand(const string &input, const char cmd[]);
@@ -47,7 +54,7 @@ void handle_c(int signum);
 void handle_z(int signum);
 
 int main(){
-//    signal(SIGINT,handle_c);
+    signal(SIGINT,handle_c);
     signal(SIGTSTP,handle_z);
 
     char machine[SZ];
@@ -107,6 +114,22 @@ int main(){
         {
             output(input,false);
         }
+        else if(input.find(FG) != string::npos)
+        {
+            if(procid != 0)
+            {
+                cout << "continuing" << endl;
+                kill(procid, SIGCONT);
+            }
+        }
+        else if(input.find(BG) != string::npos)
+        {
+            if(procid != 0)
+            {
+                kill(procid, SIGCONT);
+                procid = 0;
+            }
+        }
         else{
             createCommand(input, SEMIS);
         }
@@ -125,16 +148,19 @@ void createCommand(const string &input,const char cmd[]){
     TOKEN tok(input, sep);
     TOKEN::iterator it = tok.begin();
     for(; it != tok.end(); ++it){
+        pipe(pipefd);
         int id =fork();
+        procid=id;
         if(id == -1){
             perror("FORK");
             exit(1);
-        }else if(id == 0){
+        }
+        else if(id == 0){
             string temp = *it;
             executeCommand(temp,cmd);
         }else{
             int status = 0;
-            if( wait(&status)== -1){
+            if( waitpid(id,&status,WUNTRACED)== -1){
                 perror("WAIT");
                 exit(1);
             }
@@ -146,6 +172,22 @@ void createCommand(const string &input,const char cmd[]){
                 return;
             }else if(childDieNormal && childExit == 10){
                 exit(0);
+            }
+            else if(childDieNormal && childExit == 5)
+            {
+                char result[BUFSIZ];
+                memset(result,0,BUFSIZ);
+                close(pipefd[1]);
+                read(pipefd[0],result,BUFSIZ);
+                close(pipefd[0]);
+                chdir(result);
+
+                //                cout << "changedir to:" << changedir << endl;
+                //                if(chdir(changedir.c_str()) == -1)
+                //                {
+                //                    perror("chdir");
+                //                    exit(1);
+                //                }
             }
         }
     }
@@ -171,21 +213,30 @@ void executeCommand(const string &input,const char cmd[]){
             {
                 string home = "~";
                 replacetil(home);
-                if(chdir(home.c_str())==-1)
-                {
-                    perror("chdir");
-                    exit(1);
-                }
+                write(pipefd[1], home.c_str(),home.size());
+                close(pipefd[0]);
+                //changedir = home;
+                //                if(chdir(home.c_str())==-1)
+                //                {
+                //                    perror("chdir");
+                //                    exit(1);
+                //                }
             }
             else
             {
-                if(chdir((*it).c_str())== -1)
-                {
-                    perror("chdir");
-                    exit(1);
-                }
+                string change = *it;
+                if(change.at(0) == '~')
+                    replacetil(change);
+                write(pipefd[1], change.c_str(),change.size());
+                //changedir = change;
+                //                cout << "changing to:" << change << endl;
+                //                if(chdir(change.c_str())== -1)
+                //                {
+                //                    perror("chdir");
+                //                    exit(1);
+                //                }
             }
-            return;
+            exit(5);
         }
         //call function
     }
@@ -369,6 +420,7 @@ void inputc(const string &input, bool is3)
         }
     }
     int pid = fork();
+    procid=pid;
     if(pid == -1)
     {
         perror("fork");
@@ -379,7 +431,7 @@ void inputc(const string &input, bool is3)
     }
     else
     {
-        if(wait(NULL)==-1)
+        if(waitpid(pid,NULL,WUNTRACED)==-1)
         {
             perror("wait");
             exit(1);
@@ -433,6 +485,7 @@ void output(const string &input, bool isAp, int inp)
     if(fd == -1)
         return;
     int pid=fork();
+    procid=pid;
     if(pid ==-1)
     {
         perror("fork");
@@ -447,7 +500,7 @@ void output(const string &input, bool isAp, int inp)
     }
     else
     {
-        if(wait(NULL)==-1)
+        if(waitpid(pid,NULL,WUNTRACED)==-1)
         {
             perror("WAIT");
             exit(1);
@@ -472,6 +525,7 @@ void piping(const string &input)
         exit(1);
     }
     int pid=fork();
+    procid=pid;
     if(pid == -1)
     {
         perror("FORK");
@@ -531,7 +585,7 @@ void piping(const string &input)
     else
     {
         int status;
-        if(wait(&status)==-1)
+        if(waitpid(pid,&status,WUNTRACED)==-1)
         {
             perror("WAIT");
             exit(1);
@@ -579,6 +633,7 @@ void piping(const string &input)
         else
         {
             int apid = fork();
+            procid=apid;
             if(apid == -1)
             {
                 perror("FORK");
@@ -588,7 +643,7 @@ void piping(const string &input)
                 executeRedirect(r,fd[0],-1,-1);
             else
             {
-                if(wait(NULL) == -1)
+                if(waitpid(apid,NULL,WUNTRACED) == -1)
                 {
                     perror("WAIT");
                     exit(1);
@@ -677,11 +732,18 @@ void replacetil(string &s)
 
 void handle_c(int signum)
 {
-    cout << "ctrl + c was pressed" << endl;
-
+    if(procid != 0)
+    {
+        cout << "killing " << procid << endl;
+        kill(procid,SIGKILL);
+        procid = 0;
+    }
 }
 void handle_z(int signum)
 {
     cout << "ctrl + z was pressed" << endl;
-    raise(SIGSTOP);
+    if(procid != 0)
+    {
+        kill(procid, SIGSTOP);
+    }
 }
