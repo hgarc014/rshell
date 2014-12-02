@@ -54,8 +54,16 @@ void handle_c(int signum);
 void handle_z(int signum);
 
 int main(){
-    signal(SIGINT,handle_c);
-    signal(SIGTSTP,handle_z);
+    if(SIG_ERR==signal(SIGINT,handle_c))
+    {
+        perror("signal");
+        exit(1);
+    }
+    if(SIG_ERR==signal(SIGTSTP,handle_z))
+    {
+        perror("signal");
+        exit(1);
+    }
 
     char machine[SZ];
     string user,
@@ -177,17 +185,27 @@ void createCommand(const string &input,const char cmd[]){
             {
                 char result[BUFSIZ];
                 memset(result,0,BUFSIZ);
-                close(pipefd[1]);
-                read(pipefd[0],result,BUFSIZ);
-                close(pipefd[0]);
-                chdir(result);
+                if(-1==close(pipefd[1]))
+                {
+                    perror("CLOSE");
+                    exit(1);
+                }
+                if(-1==read(pipefd[0],result,BUFSIZ))
+                {
+                    perror("READ");
+                    exit(1);
+                }
 
-                //                cout << "changedir to:" << changedir << endl;
-                //                if(chdir(changedir.c_str()) == -1)
-                //                {
-                //                    perror("chdir");
-                //                    exit(1);
-                //                }
+                if(-1==close(pipefd[0]))
+                {
+                    perror("CLOSE");
+                    exit(1);
+                }
+                if(-1==chdir(result))
+                {
+                    perror("CHDIR");
+                    return;
+                }
             }
         }
     }
@@ -199,9 +217,6 @@ void executeCommand(const string &input,const char cmd[]){
     SEP sep(" ");
     TOKEN tok(input, sep);
     TOKEN::iterator it = tok.begin();
-    //    if(it != tok.end() && (*it) == EXIT){
-    //        exit(10);
-    //    }
     if(it != tok.end())
     {
         if((*it) == EXIT)
@@ -213,14 +228,16 @@ void executeCommand(const string &input,const char cmd[]){
             {
                 string home = "~";
                 replacetil(home);
-                write(pipefd[1], home.c_str(),home.size());
-                close(pipefd[0]);
-                //changedir = home;
-                //                if(chdir(home.c_str())==-1)
-                //                {
-                //                    perror("chdir");
-                //                    exit(1);
-                //                }
+                if(-1==write(pipefd[1], home.c_str(),home.size()))
+                {
+                    perror("WRITE");
+                    exit(1);
+                }
+                if(-1==close(pipefd[0]))
+                {
+                    perror("CLOSE");
+                    exit(1);
+                }
             }
             else
             {
@@ -228,17 +245,9 @@ void executeCommand(const string &input,const char cmd[]){
                 if(change.at(0) == '~')
                     replacetil(change);
                 write(pipefd[1], change.c_str(),change.size());
-                //changedir = change;
-                //                cout << "changing to:" << change << endl;
-                //                if(chdir(change.c_str())== -1)
-                //                {
-                //                    perror("chdir");
-                //                    exit(1);
-                //                }
             }
             exit(5);
         }
-        //call function
     }
     int i = 0;
     for(; it != tok.end(); ++it,++i){
@@ -248,7 +257,6 @@ void executeCommand(const string &input,const char cmd[]){
     argv[i] = 0;
 
     string first = getcmd(argv[0]);
-    //cout << "first=" << first << endl << endl;
 
     if(execv(first.c_str(),argv) == -1){
         perror(argv[0]);
@@ -318,7 +326,7 @@ void executeRedirect(const string &input,int nin, int nout, int nerr)
 
     string path = getcmd(argv[0]);
     execv(path.c_str(),argv);
-    perror("execv");
+    perror(argv[0]);
     for(i = 0,it = tok.begin(); it != tok.end(); ++it,++i)
         delete [] argv[i];
     exit(1);
@@ -385,7 +393,6 @@ void inputc(const string &input, bool is3)
             return;
         }
     }
-    //    char *argv[SZ];
     string l = input.substr(0,input.find(v));
     string r = input.substr(input.find(v) + v.size());
     string old = r;
@@ -459,11 +466,7 @@ void inputc(const string &input, bool is3)
 void output(const string &input, bool isAp, int inp)
 {
     string val;
-    //char *argv[SZ];
-    //    int redirect = 1;
     int flags = O_RDWR|O_CREAT;
-    //    if(input.find("2>") != string::npos)
-    //        redirect = 2;
     if(isAp)
     {
         val = ">>";
@@ -701,7 +704,6 @@ string getcmd(string file)
             }
             if(file == direntp->d_name)
             {
-                //cout << "found " << file << " at=" << temp << endl;
                 return temp + "/" + file;
             }
         }
