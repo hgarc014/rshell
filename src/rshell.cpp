@@ -74,7 +74,7 @@ int main(){
 
     if(pass != NULL && host != -1){
         user = pass->pw_name;
-        all = user + "@" + machine + "$ ";
+        all = user + "@" + machine + ":";
     }else{
         if(pass == NULL)
             perror("hostName");
@@ -82,7 +82,7 @@ int main(){
             perror("MachineName");
         cout << endl << LINE << endl
             << "Couldn't find userLogin or HostMachine displaying $ instead" << endl;
-        all = "$ ";
+        all = ":";
     }
 
     char curdir[BUFSIZ];
@@ -92,7 +92,8 @@ int main(){
         exit(1);
     }
 
-    cout << curdir << endl << all;
+    //cout << curdir << endl << all;
+    cout << all << curdir << " $ ";
     while(getline(cin, input)){
         if(input.find("#") != string::npos){
             input = input.substr(0,input.find("#"));
@@ -149,7 +150,7 @@ int main(){
             perror("getcwd");
             exit(1);
         }
-        cout << curdir << endl << all;
+        cout << all << curdir << " $ ";
     }
 }
 
@@ -692,7 +693,7 @@ string getcmd(string file)
         struct stat buf;
         if(-1==stat(tmp.c_str(),&buf))
         {
-           continue;
+            continue;
             perror("STAT");
         }
         else
@@ -735,5 +736,6 @@ void handle_z(int signum)
     if(procid != 0)
     {
         kill(procid, SIGSTOP);
+        cout << endl << "\tStopped" << endl;
     }
 }
