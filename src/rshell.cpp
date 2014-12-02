@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
@@ -38,7 +39,6 @@ const string LINE(40, '-');
 //child variable, do not change unless necessary
 pid_t procid =0;
 int pipefd[2];
-//string changedir;
 
 //functions
 void executeCommand(const string &input, const char cmd[]);
@@ -126,9 +126,10 @@ int main(){
         {
             if(procid != 0)
             {
-                cout << "continuing" << endl;
                 kill(procid, SIGCONT);
             }
+            else
+                cout << "fg: no process to place in foreground" << endl;
         }
         else if(input.find(BG) != string::npos)
         {
@@ -137,6 +138,8 @@ int main(){
                 kill(procid, SIGCONT);
                 procid = 0;
             }
+            else
+                cout << "bg: no process to place in background" << endl;
         }
         else{
             createCommand(input, SEMIS);
@@ -683,30 +686,17 @@ string getcmd(string file)
     SEP sep(":");
     TOKEN tok(temp,sep);
     TOKEN::iterator it = tok.begin();
-    DIR *dirp;
-    dirent *direntp;
-    for(;it != tok.end(); ++it)
+    for(;it!=tok.end();++it)
     {
-        string temp = *it;
-        replacetil(temp);
-        dirp = opendir(temp.c_str());
-        if(dirp == NULL)
+        string tmp = *it + "/" + file;
+        struct stat buf;
+        if(-1==stat(tmp.c_str(),&buf))
         {
-            perror("opendir");
-            exit(1);
+           continue;
+            perror("STAT");
         }
-        while((direntp=readdir(dirp)))
-        {
-            if(direntp == NULL)
-            {
-                perror("readdir");
-                exit(1);
-            }
-            if(file == direntp->d_name)
-            {
-                return temp + "/" + file;
-            }
-        }
+        else
+            return tmp;
     }
     return file;
 }
@@ -736,14 +726,12 @@ void handle_c(int signum)
 {
     if(procid != 0)
     {
-        cout << "killing " << procid << endl;
         kill(procid,SIGKILL);
         procid = 0;
     }
 }
 void handle_z(int signum)
 {
-    cout << "ctrl + z was pressed" << endl;
     if(procid != 0)
     {
         kill(procid, SIGSTOP);
