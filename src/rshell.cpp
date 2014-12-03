@@ -160,7 +160,11 @@ void createCommand(const string &input,const char cmd[]){
     TOKEN tok(input, sep);
     TOKEN::iterator it = tok.begin();
     for(; it != tok.end(); ++it){
-        pipe(pipefd);
+        if(-1==pipe(pipefd))
+        {
+            perror("pipe");
+            exit(1);
+        }
         int id =fork();
         procid=id;
         if(id == -1){
@@ -248,7 +252,11 @@ void executeCommand(const string &input,const char cmd[]){
                 string change = *it;
                 if(change.at(0) == '~')
                     replacetil(change);
-                write(pipefd[1], change.c_str(),change.size());
+                if(-1==write(pipefd[1], change.c_str(),change.size()))
+                {
+                    perror("write");
+                    exit(1);
+                }
             }
             exit(5);
         }
